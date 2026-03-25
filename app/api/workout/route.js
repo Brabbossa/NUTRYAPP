@@ -6,36 +6,31 @@ export const maxDuration = 60;
 
 export async function POST(req) {
   try {
-    const { profile, targetMuscle, workoutHistory } = await req.json();
+    const { profile, targetMuscle, workoutHistory, voiceModification } = await req.json();
     
     const historyText = workoutHistory && workoutHistory.length > 0
-      ? JSON.stringify(workoutHistory.slice(-5)) // last 5 for context
+      ? JSON.stringify(workoutHistory.slice(-5))
       : 'Nessuno storico recente.';
 
-    const prompt = `Sei un Personal Trainer AI ("Synapse Professional").
-L'utente (${profile.activityLevel}, Età: ${profile.age}) vuole allenare il seguente gruppo muscolare: ${targetMuscle}.
+    let extraInstruction = '';
+    if (voiceModification) {
+      extraInstruction = `\nIMPORTANTE: L'utente ha fatto questa richiesta vocale: "${voiceModification}". Adatta l'allenamento di conseguenza.\n`;
+    }
 
-Storico ultimi allenamenti salvati e relativi RPE (sforzo percepito 1-10): 
-${historyText}
+    const prompt = `Sei un Personal Trainer AI ("Synapse Professional").
+L'utente (${profile.activityLevel}, Età: ${profile.age}) vuole allenare: ${targetMuscle}.
+${extraInstruction}
+Storico ultimi allenamenti e RPE: ${historyText}
 
 REGOLA SOVRACCARICO PROGRESSIVO:
-Se l'utente ha fatto questo stesso gruppo muscolare di recente e l'RPE era basso (<7), devi suggerire un lieve aumento di carico o ripetizioni (Sovraccarico).
-Se l'RPE era alto (>8), mantieni il carico o indica un leggero scarico tecnico.
+Se RPE basso (<7): suggerisci aumento carico/ripetizioni.
+Se RPE alto (>8): mantieni o riduci leggermente.
 
-Formato:
-Rispondi ESCLUSIVAMENTE con un JSON puro che rispetta questa struttura:
-{
-  "titolo": "Titolo motivante dell'allenamento",
-  "esercizi": [
-    { "nome": "Nome esercizio", "serie": "numero", "ripetizioni": "numero/range", "recupero": "secondi", "note_carico": "suggerimento carico" },
-    ...
-  ]
-}
-
-Non includere commenti o markdown extra.`;
+Rispondi SOLO con JSON valido:
+{"titolo":"...","esercizi":[{"nome":"...","serie":"...","ripetizioni":"...","recupero":"...","note_carico":"..."}]}`;
 
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash",
+      model: "gemini-2.0-flash",
       generationConfig: { responseMimeType: "application/json" }
     });
     
@@ -44,7 +39,7 @@ Non includere commenti o markdown extra.`;
 
     return Response.json(plan);
   } catch (error) {
-    console.error("Gemini AI Error:", error);
-    return Response.json({ error: "Failed to generate workout" }, { status: 500 });
+    console.error("Gemini AI Error:", error.message || error);
+    return Response.json({ error: "Errore Gemini: " + (error.message || "Sconosciuto") }, { status: 500 });
   }
 }
