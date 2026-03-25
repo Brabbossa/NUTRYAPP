@@ -1,10 +1,15 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-dark: #050505;
+  --color-card: #111111;
+  --color-primary: #00FF41;
+  --color-muted: #2A2A2A;
+}
 
 @layer base {
   body {
-    background-color: #050505;
+    background-color: var(--color-dark);
     color: #ffffff;
     font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -16,7 +21,7 @@
     display: none;
   }
   .no-scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
