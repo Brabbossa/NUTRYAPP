@@ -9,7 +9,11 @@ const withPWA = withPWAInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // altre config se necessario
+  turbopack: {},
+  experimental: {
+    // Force webpack for next-pwa compatibility
+    useWasmBinary: false
+  }
 };
 
 export default withPWA(nextConfig);
