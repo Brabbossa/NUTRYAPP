@@ -1,0 +1,9 @@
+{
+  "name": "Impariamo a Leccare",
+  "short_name": "IAL",
+  "description": "App Fitness Personalizzata e Professional Sidebar",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#00FF41"
+}

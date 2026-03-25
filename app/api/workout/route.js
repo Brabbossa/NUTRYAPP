@@ -1,33 +1,50 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { saveWorkout, getLatestWorkout, getUserProfile } from '@/lib/db';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+export const maxDuration = 60;
+
 export async function POST(req) {
   try {
-    const { targetMuscle } = await req.json();
-    const profile = getUserProfile();
-    const lastWorkout = getLatestWorkout();
+    const { profile, targetMuscle, workoutHistory } = await req.json();
     
-    let context = `L'utente vuole allenare: ${targetMuscle}.`;
-    if (lastWorkout && lastWorkout.rpe) {
-      context += ` L'ultimo allenamento ha avuto un RPE (sforzo percepito da 1 a 10) di ${lastWorkout.rpe}. In base a questo, se l'RPE era alto (>8), rendi l'allenamento di oggi leggermente più facile in termini di volume. Se era basso (<6), aumenta l'intensità o il volume.`;
-    }
+    const historyText = workoutHistory && workoutHistory.length > 0
+      ? JSON.stringify(workoutHistory.slice(-5)) // last 5 for context
+      : 'Nessuno storico recente.';
 
-    const prompt = `Sei un esperto personal trainer AI ("Synapse AI"). 
-Genera un breve allenamento (max 5 esercizi) basato su questo contesto: ${context}
-Formato richiesto: solo elenco puntato degli esercizi con serie e ripetizioni, senza introduzioni o saluti. Mantieni un tono motivazionale e diretto (stile 'Dark Fitness').`;
+    const prompt = `Sei un Personal Trainer AI ("Synapse Professional").
+L'utente (${profile.activityLevel}, Età: ${profile.age}) vuole allenare il seguente gruppo muscolare: ${targetMuscle}.
 
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+Storico ultimi allenamenti salvati e relativi RPE (sforzo percepito 1-10): 
+${historyText}
+
+REGOLA SOVRACCARICO PROGRESSIVO:
+Se l'utente ha fatto questo stesso gruppo muscolare di recente e l'RPE era basso (<7), devi suggerire un lieve aumento di carico o ripetizioni (Sovraccarico).
+Se l'RPE era alto (>8), mantieni il carico o indica un leggero scarico tecnico.
+
+Formato:
+Rispondi ESCLUSIVAMENTE con un JSON puro che rispetta questa struttura:
+{
+  "titolo": "Titolo motivante dell'allenamento",
+  "esercizi": [
+    { "nome": "Nome esercizio", "serie": "numero", "ripetizioni": "numero/range", "recupero": "secondi", "note_carico": "suggerimento carico" },
+    ...
+  ]
+}
+
+Non includere commenti o markdown extra.`;
+
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-1.5-flash",
+      generationConfig: { responseMimeType: "application/json" }
+    });
+    
     const result = await model.generateContent(prompt);
-    const plan = result.response.text();
+    const plan = JSON.parse(result.response.text());
 
-    const date = new Date().toISOString().split('T')[0];
-    saveWorkout(date, plan, null); // saving without RPE yet
-
-    return Response.json({ plan, date });
+    return Response.json(plan);
   } catch (error) {
     console.error("Gemini AI Error:", error);
-    return Response.json({ error: "Failed to generate workout", details: error.message }, { status: 500 });
+    return Response.json({ error: "Failed to generate workout" }, { status: 500 });
   }
 }

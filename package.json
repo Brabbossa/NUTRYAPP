@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"next dev\" \"node worker.js\"",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
@@ -12,13 +12,18 @@
     "@google/generative-ai": "^0.24.1",
     "better-sqlite3": "^12.8.0",
     "concurrently": "^9.2.1",
+    "lucide-react": "^1.7.0",
     "next": "16.2.1",
+    "next-pwa": "^5.6.0",
     "node-cron": "^4.2.1",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
   "devDependencies": {
+    "autoprefixer": "^10.4.27",
     "eslint": "^9",
-    "eslint-config-next": "16.2.1"
+    "eslint-config-next": "16.2.1",
+    "postcss": "^8.5.8",
+    "tailwindcss": "^4.2.2"
   }
 }
