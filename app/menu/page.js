@@ -34,7 +34,7 @@ export default function MenuPage() {
       const res = await fetch('/api/generate-menu', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...profile, voiceModification: combinedMod || undefined })
+        body: JSON.stringify({ profile, voiceModification: combinedMod || undefined })
       })
       const data = await res.json()
       if (res.ok && data.menu) {
