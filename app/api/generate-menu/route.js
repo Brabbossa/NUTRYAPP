@@ -28,7 +28,7 @@ Rispondi SOLO con JSON valido con questa struttura:
 {"menu":{"Lunedì":[{"nome_pasto":"Colazione","titolo":"...","ingredienti":"...","istruzioni":"...","pro":30,"cho":40,"fat":10,"zuccheri":5}],"Martedì":[...],"Mercoledì":[...],"Giovedì":[...],"Venerdì":[...],"Sabato":[...],"Domenica":[...]}}`;
 
     const model = genAI.getGenerativeModel({ 
-      model: "gemini-2.0-flash",
+      model: "gemini-1.5-flash",
       generationConfig: { responseMimeType: "application/json" }
     });
     
