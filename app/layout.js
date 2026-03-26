@@ -10,14 +10,14 @@ export const viewport = {
 }
 
 export const metadata = {
-  title: 'Impariamo a Leccare',
+  title: 'Eat & Fit',
   description: 'Synapse Professional AI Tracker',
   manifest: '/manifest.json',
   themeColor: '#00FF41',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'IAL App'
+    title: 'Eat & Fit'
   }
 }
 
