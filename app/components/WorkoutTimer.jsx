@@ -93,12 +93,15 @@ export function WorkoutTimer({ plan, onComplete }) {
           // Voice cues at key moments
           if (prev === 11 && voiceEnabled) speak('Dieci secondi alla fine della pausa')
           if (prev === 4 && voiceEnabled) speak('Tre, due, uno')
+          if (totalTime > 20 && prev === Math.floor(totalTime / 2) && voiceEnabled) {
+            speak('Forza Enrico! Cazzo daje uomo! Sei il più forte! Sbracali tutti!')
+          }
           return prev - 1
         })
       }, 1000)
     }
     return () => clearInterval(intervalRef.current)
-  }, [phase, isPaused, countdown, voiceEnabled])
+  }, [phase, isPaused, countdown, voiceEnabled, totalTime])
 
   // When rest countdown hits 0, move to next set/exercise
   useEffect(() => {
