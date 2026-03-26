@@ -19,29 +19,40 @@ export function VoiceCommand({ onResult, placeholder = "Parla per modificare..."
 
     const recognition = new SpeechRecognition()
     recognition.lang = 'it-IT'
-    recognition.continuous = false
+    recognition.continuous = true
     recognition.interimResults = true
 
-    recognition.onstart = () => setIsListening(true)
+    recognition.onstart = () => {
+      setIsListening(true)
+      setTranscript('')
+    }
     
     recognition.onresult = (event) => {
-      let finalTranscript = ''
+      let currentTranscript = ''
       for (let i = 0; i < event.results.length; i++) {
-        finalTranscript += event.results[i][0].transcript
+        currentTranscript += event.results[i][0].transcript
       }
-      setTranscript(finalTranscript)
-      
-      if (event.results[0].isFinal) {
-        onResult(finalTranscript)
-      }
+      setTranscript(currentTranscript)
     }
 
     recognition.onerror = (event) => {
-      setError('Errore microfono: ' + event.error)
+      console.error("Speech error", event.error)
+      if (event.error !== 'no-speech') {
+         setError('Errore microfono: ' + event.error)
+      }
       setIsListening(false)
     }
 
-    recognition.onend = () => setIsListening(false)
+    recognition.onend = () => {
+      setIsListening(false)
+      // Se si ferma da solo o viene fermato, prendiamo lo state più recente
+      setTranscript((current) => {
+        if (current.trim().length > 0) {
+          onResult(current.trim())
+        }
+        return current
+      })
+    }
 
     recognitionRef.current = recognition
     recognition.start()
@@ -52,6 +63,7 @@ export function VoiceCommand({ onResult, placeholder = "Parla per modificare..."
       recognitionRef.current.stop()
     }
     setIsListening(false)
+    // l'invio avviene in onend
   }
 
   return (
