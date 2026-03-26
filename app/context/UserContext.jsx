@@ -97,10 +97,13 @@ export function UserProvider({ children }) {
       if (error && error.code !== 'PGRST116') {
         console.error('Error fetching profile:', error);
       }
-      
       if (data) {
         // Formatta campi snake_case a camelCase dove serve o mantienili
-        setProfile({ ...defaultProfile, ...data });
+        // Filtriamo i valori null per evitare che sovrascrivano il defaultProfile
+        const cleanData = Object.fromEntries(
+          Object.entries(data).filter(([_, v]) => v !== null && v !== undefined)
+        );
+        setProfile({ ...defaultProfile, ...cleanData });
       } else {
         // Inserisci default se non c'è
         const { data: newProfile, error: insertError } = await supabase
