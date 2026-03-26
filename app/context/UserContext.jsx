@@ -125,10 +125,18 @@ export function UserProvider({ children }) {
     const updated = { ...profile, ...newProfile };
     setProfile(updated);
     if (user) {
-      await supabase
+      // Rimuovi campi che Supabase non accetta (come created_at generati automaticamente)
+      const toSave = { ...newProfile };
+      delete toSave.id; // Non sovrascrivere la PK
+      
+      const { error } = await supabase
         .from('profiles')
-        .update(newProfile)
+        .update(toSave)
         .eq('id', user.id);
+      
+      if (error) {
+        console.error('Errore salvataggio profilo Supabase:', error);
+      }
     }
   };
 
