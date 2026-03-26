@@ -147,11 +147,37 @@ export default function MenuPage() {
                 {day}
               </button>
             ))}
+            {weeklyMenu.lista_spesa && (
+              <button onClick={() => setSelectedDay('Spesa')}
+                className={`px-4 py-2 rounded-full whitespace-nowrap font-semibold transition border border-dashed ${selectedDay === 'Spesa' ? 'bg-[--color-primary] text-[--color-dark] border-[--color-primary]' : 'bg-[--color-card] text-[--color-primary] hover:bg-[--color-primary]/10 border-[--color-primary]/50'}`}>
+                🛒 Lista della Spesa
+              </button>
+            )}
           </div>
 
           <div className="grid grid-cols-1 gap-4">
-            {(Array.isArray(weeklyMenu.menu[selectedDay]) ? weeklyMenu.menu[selectedDay] : []).map((meal, i) => (
-              <div key={i} className="bg-[--color-card] border border-[--color-muted] rounded-2xl p-6 flex flex-col md:flex-row gap-6 hover:border-[--color-primary]/50 transition relative overflow-hidden">
+            {selectedDay === 'Spesa' && weeklyMenu.lista_spesa ? (
+              <div className="bg-[--color-card] border border-[--color-primary]/30 rounded-2xl p-6 shadow-[0_0_20px_rgba(0,255,65,0.05)]">
+                <h2 className="text-2xl font-bold text-[--color-primary] mb-6 flex items-center gap-2">🛒 Lista della Spesa Settimanale</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {(Array.isArray(weeklyMenu.lista_spesa) ? weeklyMenu.lista_spesa : []).map((cat, idx) => (
+                    <div key={idx} className="space-y-3">
+                      <h3 className="font-bold text-lg text-white border-b border-[--color-muted] pb-2">{cat.categoria}</h3>
+                      <ul className="space-y-2">
+                        {(Array.isArray(cat.items) ? cat.items : []).map((item, i) => (
+                          <li key={i} className="flex items-start gap-2 text-gray-400">
+                            <div className="w-1.5 h-1.5 rounded-full bg-[--color-primary] mt-2 shrink-0"></div>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              (Array.isArray(weeklyMenu.menu[selectedDay]) ? weeklyMenu.menu[selectedDay] : []).map((meal, i) => (
+                <div key={i} className="bg-[--color-card] border border-[--color-muted] rounded-2xl p-6 flex flex-col md:flex-row gap-6 hover:border-[--color-primary]/50 transition relative overflow-hidden">
                 <div className="absolute left-0 top-0 bottom-0 w-1 bg-[--color-primary]/40"></div>
                 <div className="flex-1 space-y-3">
                   <div className="flex items-center gap-3">
@@ -207,7 +233,8 @@ export default function MenuPage() {
                   )}
                 </div>
               </div>
-            ))}
+            ))
+            )}
           </div>
         </div>
       )}
