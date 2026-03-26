@@ -1,6 +1,6 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import Groq from 'groq-sdk';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 export const maxDuration = 60;
 
@@ -24,21 +24,32 @@ Genera un piano alimentare settimanale (Lunedì-Domenica) per un utente con ques
 ${extraInstruction}
 Pasti richiesti ogni giorno: Colazione, Spuntino 1, Pranzo, Spuntino 2, Cena.
 
-Rispondi SOLO con JSON valido con questa struttura:
-{"menu":{"Lunedì":[{"nome_pasto":"Colazione","titolo":"...","ingredienti":"...","istruzioni":"...","pro":30,"cho":40,"fat":10,"zuccheri":5}],"Martedì":[...],"Mercoledì":[...],"Giovedì":[...],"Venerdì":[...],"Sabato":[...],"Domenica":[...]}}`;
+Rispondi esplicitamente restituendo SOLO un oggetto JSON valido. Usa la seguente esatta architettura per i dati (ripeti per tutti e 7 i giorni da Lunedì a Domenica):
+{
+  "menu": {
+    "Lunedì": [
+      { "nome_pasto": "Colazione", "titolo": "nome pasto", "ingredienti": "lista ingredienti...", "istruzioni": "istruzioni...", "pro": 30, "cho": 40, "fat": 10, "zuccheri": 5 },
+      { "nome_pasto": "Spuntino 1", "titolo": "...", "ingredienti": "...", "istruzioni": "...", "pro": 15, "cho": 20, "fat": 5, "zuccheri": 2 }
+    ],
+    "Martedì": [
+      /* stessi 5 pasti */
+    ],
+    ...
+  }
+}`;
 
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash",
-      generationConfig: { responseMimeType: "application/json" }
+    const completion = await groq.chat.completions.create({
+      messages: [{ role: "user", content: prompt }],
+      model: "llama-3.3-70b-versatile",
+      response_format: { type: "json_object" }
     });
     
-    const result = await model.generateContent(prompt);
-    const resultText = result.response.text();
+    const resultText = completion.choices[0].message.content;
     const menuData = JSON.parse(resultText);
 
     return Response.json(menuData);
   } catch (error) {
-    console.error("Gemini Generate Menu Error:", error.message || error);
-    return Response.json({ error: "Errore Gemini: " + (error.message || "Sconosciuto") }, { status: 500 });
+    console.error("Groq Generate Menu Error:", error.message || error);
+    return Response.json({ error: "Errore Groq: " + (error.message || "Sconosciuto") }, { status: 500 });
   }
 }

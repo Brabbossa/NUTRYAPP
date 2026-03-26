@@ -1,6 +1,6 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import Groq from 'groq-sdk';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 export const maxDuration = 60;
 
@@ -26,20 +26,26 @@ REGOLA SOVRACCARICO PROGRESSIVO:
 Se RPE basso (<7): suggerisci aumento carico/ripetizioni.
 Se RPE alto (>8): mantieni o riduci leggermente.
 
-Rispondi SOLO con JSON valido:
-{"titolo":"...","esercizi":[{"nome":"...","serie":"...","ripetizioni":"...","recupero":"...","note_carico":"..."}]}`;
+Rispondi SOLO con JSON valido avente questa struttura:
+{
+  "titolo": "Titolo allenamento",
+  "esercizi": [
+    { "nome": "Nome Esercizio", "serie": "numero", "ripetizioni": "numero/range", "recupero": "secondi", "note_carico": "nota" }
+  ]
+}`;
 
-    const model = genAI.getGenerativeModel({ 
-      model: "gemini-1.5-flash",
-      generationConfig: { responseMimeType: "application/json" }
+    const completion = await groq.chat.completions.create({
+      messages: [{ role: "user", content: prompt }],
+      model: "llama-3.3-70b-versatile",
+      response_format: { type: "json_object" }
     });
     
-    const result = await model.generateContent(prompt);
-    const plan = JSON.parse(result.response.text());
+    const resultText = completion.choices[0].message.content;
+    const plan = JSON.parse(resultText);
 
     return Response.json(plan);
   } catch (error) {
-    console.error("Gemini AI Error:", error.message || error);
-    return Response.json({ error: "Errore Gemini: " + (error.message || "Sconosciuto") }, { status: 500 });
+    console.error("Groq AI Error:", error.message || error);
+    return Response.json({ error: "Errore Groq: " + (error.message || "Sconosciuto") }, { status: 500 });
   }
 }
