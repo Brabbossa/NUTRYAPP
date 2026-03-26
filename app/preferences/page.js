@@ -5,7 +5,7 @@ import { useUser } from '../context/UserContext'
 import { Save, Bell, BellOff, CalendarPlus, CheckCircle2 } from 'lucide-react'
 
 export default function PreferencesPage() {
-  const { profile, updateProfile } = useUser()
+  const { profile, updateProfile, resetAllData } = useUser()
   const [formData, setFormData] = useState(profile)
   const [toast, setToast] = useState('')
   const [notifPermission, setNotifPermission] = useState('default')
@@ -510,6 +510,31 @@ ${events}END:VCALENDAR`
               📅 Esporta nel Calendario
             </button>
           </div>
+        </div>
+      </section>
+
+      {/* Danger Zone */}
+      <section className="bg-red-500/5 border border-red-500/20 p-6 rounded-2xl space-y-4 shadow-[0_0_20px_rgba(239,68,68,0.05)] mt-8">
+        <h2 className="text-xl font-semibold text-red-500 flex items-center gap-2">⚠️ Danger Zone</h2>
+        <div className="bg-dark/50 p-5 rounded-xl border border-red-500/10">
+          <h3 className="text-white font-bold mb-2">Reset Totale Dati</h3>
+          <p className="text-sm text-gray-400 mb-4">Questa azione eliminerà definitivamente tutto il tuo storico pasti, lo storico dei workout, i menù generati e riporterà il tuo profilo ai valori di default. L'azione è irreversibile.</p>
+          
+          <button
+            onClick={async () => {
+              if (window.confirm("Sei sicuro di voler cancellare TUTTI i tuoi dati? Questa azione è irreversibile.")) {
+                try {
+                  await resetAllData();
+                  window.location.href = '/'; // Ricarica la pagina da capo con i default minimi
+                } catch(e) {
+                  console.error('Errore Reset:', e)
+                }
+              }
+            }}
+            className="w-full md:w-auto bg-red-500/10 text-red-500 border border-red-500/50 font-bold px-6 py-3 rounded-xl hover:bg-red-500 hover:text-white transition-all active:scale-95 flex items-center justify-center gap-2"
+          >
+            Cancella Tutto e Ricomincia
+          </button>
         </div>
       </section>
     </div>

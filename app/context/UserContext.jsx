@@ -168,8 +168,33 @@ export function UserProvider({ children }) {
     return <Auth />;
   }
 
+  const resetAllData = async () => {
+    if (!user) return;
+    
+    // 1. Reset DB: Delete all history for this user
+    await supabase.from('meals_history').delete().eq('user_id', user.id);
+    await supabase.from('workout_history').delete().eq('user_id', user.id);
+    
+    // 2. Reset Profile to minimum defaults on DB
+    const minProfile = {
+      weight: null, height: null, age: null, body_fat: null,
+      tdee: null, protein_target: null, diet_type: 'Onnivoro', allergies: '',
+      gender: 'Uomo', chest_cm: null, waist_cm: null, hips_cm: null, thighs_cm: null,
+      work_type: 'Studente/Scrivania', training_experience: 'Intermedio', goal: 'Ipertrofia',
+      equipment: 'Palestra Completa', workout_duration: '60 min', workout_frequency: '3 giorni/settimana',
+      injuries: null, water_target: 2.5, supplements: null, meals_out: 'Mai'
+    };
+    await supabase.from('profiles').update(minProfile).eq('id', user.id);
+
+    // 3. Clear Local State
+    setProfile(minProfile);
+    setWorkoutHistory([]);
+    setWeeklyMenu(null);
+    localStorage.removeItem(`menu_${user.id}`);
+  };
+
   return (
-    <UserContext.Provider value={{ user, profile, updateProfile, weeklyMenu, setWeeklyMenu, workoutHistory, setWorkoutHistory, saveWorkout }}>
+    <UserContext.Provider value={{ user, profile, updateProfile, weeklyMenu, setWeeklyMenu, workoutHistory, setWorkoutHistory, saveWorkout, resetAllData }}>
       {children}
     </UserContext.Provider>
   );
