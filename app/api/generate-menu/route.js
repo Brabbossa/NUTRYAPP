@@ -13,8 +13,8 @@ export async function POST(req) {
       extraInstruction = `\nIMPORTANTE: L'utente ha richiesto la seguente modifica vocale al menù: "${voiceModification}". Tieni conto di questa richiesta nella generazione.\n`;
     }
 
-    const prompt = `Sei un nutrizionista AI sportivo ("Synapse Professional"). 
-Genera un piano alimentare settimanale (Lunedì-Domenica) per un utente con questi parametri:
+    const prompt = `Sei un nutrizionista AI sportivo e Chef di altissimo livello ("Synapse Professional"). 
+Genera un piano alimentare settimanale (da Lunedì a Domenica) per un utente con questi parametri:
 - Peso: ${profile.weight}kg, Altezza: ${profile.height}cm, Età: ${profile.age}
 - Fabbisogno Stimato (TDEE): ${profile.tdee} kcal/giorno
 - Target Macronutrienti: Proteine ~${profile.proteinTarget}g per pasto.
@@ -22,19 +22,26 @@ Genera un piano alimentare settimanale (Lunedì-Domenica) per un utente con ques
 - Dieta: ${profile.dietType}
 - Allergie/Intolleranze: ${profile.allergies || 'Nessuna'}
 ${extraInstruction}
-Pasti richiesti ogni giorno: Colazione, Spuntino 1, Pranzo, Spuntino 2, Cena.
 
-Rispondi esplicitamente restituendo SOLO un oggetto JSON valido. Usa la seguente esatta architettura per i dati (ripeti per tutti e 7 i giorni da Lunedì a Domenica):
+REGOLE FONDAMENTALI:
+1. OBBLIGO DEI 5 PASTI: Per OGNI SINGOLO GIORNO della settimana devi generare ESATTAMENTE 5 pasti: "Colazione", "Spuntino 1", "Pranzo", "Spuntino 2", "Cena". Totale: 35 pasti esatti. Nessuna eccezione.
+2. NESSUNA ABBREVIAZIONE: Il modello matematico fallirà se usi abbreviazioni, puntini di sospensione (...) o frasi come "stessi 5 pasti". DEVI stampare l'intero JSON array per ogni giorno di tutti i 7 giorni.
+3. ESTREMA VARIETÀ E GUSTO: Ispira le ricette a menù salutari, deliziosi e vari. Non ripetere gli stessi alimenti di continuo; alterna fonti proteiche (pollo, pesce, tofu, uova, legumi, vitello magro) e carboidrati (riso basmati, quinoa, patate dolci, pasta integrale, avena). Usa spezie ed erbe aromatiche nelle descrizioni.
+
+Rispondi RESTITUENDO SOLO UN OGGETTO JSON. Esempio della struttura che DEVI replicare da Lunedì a Domenica coprendo tutti e 5 i pasti ogni giorno:
 {
   "menu": {
     "Lunedì": [
-      { "nome_pasto": "Colazione", "titolo": "nome pasto", "ingredienti": "lista ingredienti...", "istruzioni": "istruzioni...", "pro": 30, "cho": 40, "fat": 10, "zuccheri": 5 },
-      { "nome_pasto": "Spuntino 1", "titolo": "...", "ingredienti": "...", "istruzioni": "...", "pro": 15, "cho": 20, "fat": 5, "zuccheri": 2 }
+      { "nome_pasto": "Colazione", "titolo": "Porridge proteico ai frutti di bosco e mandorle", "ingredienti": "Avena 50g, Proteine siero 30g, Lamponi 50g, Mandorle 10g", "istruzioni": "Cuocere l'avena, a fuoco spento amalgamare le proteine. Guarnire con lamponi e mandorle.", "pro": 35, "cho": 40, "fat": 12, "zuccheri": 5 },
+      { "nome_pasto": "Spuntino 1", "titolo": "...", "ingredienti": "...", "istruzioni": "...", "pro": 15, "cho": 20, "fat": 5, "zuccheri": 2 },
+      { "nome_pasto": "Pranzo", "titolo": "...", "ingredienti": "...", "istruzioni": "...", "pro": 30, "cho": 50, "fat": 15, "zuccheri": 3 },
+      { "nome_pasto": "Spuntino 2", "titolo": "...", "ingredienti": "...", "istruzioni": "...", "pro": 15, "cho": 20, "fat": 5, "zuccheri": 2 },
+      { "nome_pasto": "Cena", "titolo": "...", "ingredienti": "...", "istruzioni": "...", "pro": 35, "cho": 40, "fat": 15, "zuccheri": 3 }
     ],
     "Martedì": [
-      /* stessi 5 pasti */
-    ],
-    ...
+      // ... devi scrivere tutti e 5 i pasti completi per Martedì ...
+    ]
+    // ... prosegui Scrivendo tutto fino alla Domenica compresa ...
   }
 }`;
 
