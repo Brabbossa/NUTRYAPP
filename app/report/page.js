@@ -67,24 +67,32 @@ export default function ReportPage() {
 
   return (
     <div className="max-w-4xl mx-auto pb-20 space-y-8">
-      <div>
-        <h1 className="text-4xl font-black mb-2 flex items-center gap-3"><Brain className="text-primary" size={36}/> Synapse Clinic</h1>
-        <p className="text-gray-400">Genera la tua valutazione clinica settimanale basata sui dati tracciati negli ultimi 7 giorni.</p>
+      {/* Hero Header */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0a1a0f] via-[--color-card] to-[#0f1a14] border border-[--color-primary]/20 p-8">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-[--color-primary]/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+        <div className="relative z-10">
+          <h1 className="text-4xl font-extrabold tracking-tight flex items-center gap-3">
+            <Brain className="text-[--color-primary]" size={36}/>
+            <span className="bg-gradient-to-r from-[--color-primary] via-emerald-400 to-teal-300 bg-clip-text text-transparent">Synapse</span>
+            <span className="text-white">Clinic</span>
+          </h1>
+          <p className="text-gray-500 mt-2 text-sm">Genera la tua valutazione clinica settimanale basata sui dati tracciati negli ultimi 7 giorni.</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <div className="bg-card border border-muted p-6 rounded-2xl flex flex-col items-center justify-center text-center">
+        <div className="bg-[#1a1a2e] border border-[#2a2a3e] p-6 rounded-2xl flex flex-col items-center justify-center text-center">
           <span className="text-4xl font-black text-white">{stats.meals}</span>
           <span className="text-sm text-gray-400 font-bold uppercase tracking-wider mt-1">Pasti Completati</span>
         </div>
-        <div className="bg-card border border-muted p-6 rounded-2xl flex flex-col items-center justify-center text-center">
-          <span className="text-4xl font-black text-primary">{stats.workouts}</span>
+        <div className="bg-[#1a1a2e] border border-[#2a2a3e] p-6 rounded-2xl flex flex-col items-center justify-center text-center">
+          <span className="text-4xl font-black text-[--color-primary]">{stats.workouts}</span>
           <span className="text-sm text-gray-400 font-bold uppercase tracking-wider mt-1">Workout Fatti</span>
         </div>
       </div>
 
       {!reportHtml && !loading && (
-        <button onClick={generateReport} className="w-full bg-primary text-dark font-black text-xl py-6 rounded-2xl hover:opacity-90 transition active:scale-95 shadow-[0_0_30px_rgba(0,255,65,0.2)]">
+        <button onClick={generateReport} className="w-full bg-gradient-to-r from-[--color-primary] to-emerald-400 text-[--color-dark] font-black text-xl py-6 rounded-2xl hover:shadow-[0_0_30px_rgba(0,255,65,0.3)] transition-all duration-300 active:scale-95">
           ANALIZZA LA MIA SETTIMANA
         </button>
       )}

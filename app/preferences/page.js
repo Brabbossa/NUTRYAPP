@@ -175,11 +175,17 @@ ${events}END:VCALENDAR`
 
   return (
     <div className="max-w-3xl mx-auto space-y-6 pb-20">
-      <div className="flex items-center justify-between border-b border-muted pb-4">
-        <h1 className="text-3xl font-bold">Preferences</h1>
+      {/* Hero Header */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0a1a0f] via-[--color-card] to-[#0f1a14] border border-[--color-primary]/20 p-8 flex items-center justify-between">
+        <div className="absolute top-0 right-0 w-48 h-48 bg-[--color-primary]/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+        <div className="relative z-10">
+          <h1 className="text-4xl font-extrabold tracking-tight">
+            <span className="bg-gradient-to-r from-[--color-primary] via-emerald-400 to-teal-300 bg-clip-text text-transparent">Preferences</span>
+          </h1>
+        </div>
         <button 
           onClick={handleSave}
-          className="flex items-center gap-2 bg-primary text-dark font-bold px-4 py-2 rounded-lg hover:bg-opacity-80 transition"
+          className="relative z-10 flex items-center gap-2 bg-gradient-to-r from-[--color-primary] to-emerald-400 text-[--color-dark] font-extrabold px-6 py-3 rounded-xl hover:shadow-[0_0_25px_rgba(0,255,65,0.3)] transition-all duration-300 active:scale-95"
         >
           <Save size={18} /> Salva
         </button>
