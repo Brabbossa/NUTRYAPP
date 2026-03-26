@@ -78,52 +78,87 @@ export default function WorkoutPage() {
 
   return (
     <div className="max-w-4xl mx-auto pb-20 space-y-8">
-      <div className="border-b border-[--color-muted] pb-4">
-        <h1 className="text-3xl font-bold flex items-center gap-3">
-          <Dumbbell className="text-[--color-primary]" size={32} /> 
-          Workout <span className="text-[--color-primary]">Periodizzato</span>
-        </h1>
-        <p className="text-gray-400 mt-2">Scegli un pacchetto e genera, oppure personalizza con la tua voce.</p>
+      {/* Hero Header */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0a1a0f] via-[--color-card] to-[#0f1a14] border border-[--color-primary]/20 p-8">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-[--color-primary]/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-[--color-primary]/5 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-4xl font-extrabold tracking-tight">
+              <span className="bg-gradient-to-r from-[--color-primary] via-emerald-400 to-teal-300 bg-clip-text text-transparent">Workout</span>
+              <span className="text-white ml-2">Periodizzato</span>
+            </h1>
+            <p className="text-gray-500 mt-2 text-sm">Scegli il tuo split, genera con l'AI, e spacca tutto.</p>
+          </div>
+          <div className="flex items-center gap-3 text-xs font-mono">
+            <div className="bg-[--color-dark] border border-[--color-muted] px-3 py-2 rounded-lg text-center">
+              <span className="block text-gray-500 mb-0.5">ATTREZZATURA</span>
+              <span className="text-[--color-primary] font-bold">{profile.equipment || 'Palestra'}</span>
+            </div>
+            <div className="bg-[--color-dark] border border-[--color-muted] px-3 py-2 rounded-lg text-center">
+              <span className="block text-gray-500 mb-0.5">OBIETTIVO</span>
+              <span className="text-white font-bold">{profile.goal || 'Ipertrofia'}</span>
+            </div>
+            <div className="bg-[--color-dark] border border-[--color-muted] px-3 py-2 rounded-lg text-center">
+              <span className="block text-gray-500 mb-0.5">DURATA</span>
+              <span className="text-white font-bold">{profile.workout_duration || '60 min'}</span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Preset Packages */}
-      <div className="space-y-3">
-        <h3 className="flex items-center gap-2 text-sm font-semibold text-gray-400 uppercase tracking-wider">
-          <Package size={16} /> Scegli il Pacchetto
+      {/* Preset Cards - Modern Grid */}
+      <div className="space-y-4">
+        <h3 className="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-[0.2em]">
+          <div className="w-6 h-[2px] bg-[--color-primary] rounded-full"></div>
+          Seleziona lo Split
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {WORKOUT_PRESETS.map(preset => (
             <button
               key={preset.id}
               onClick={() => setSelectedPreset(selectedPreset === preset.id ? null : preset.id)}
-              className={`p-4 rounded-xl text-left transition-all border ${
+              className={`group relative p-4 rounded-2xl text-left transition-all duration-300 border overflow-hidden ${
                 selectedPreset === preset.id
-                  ? 'bg-[--color-primary]/15 text-[--color-primary] border-[--color-primary] shadow-[0_0_15px_rgba(0,255,65,0.1)]'
-                  : 'bg-[--color-card] text-gray-400 border-[--color-muted] hover:text-white hover:border-gray-500'
+                  ? 'bg-gradient-to-br from-[--color-primary]/20 to-[--color-primary]/5 text-[--color-primary] border-[--color-primary] shadow-[0_0_25px_rgba(0,255,65,0.12)] scale-[1.02]'
+                  : 'bg-[--color-card] text-gray-400 border-[--color-muted] hover:text-white hover:border-gray-600 hover:bg-[--color-card]/80'
               }`}
             >
-              <span className="text-lg font-bold block">{preset.label}</span>
-              <span className="text-xs opacity-60 mt-1 block">{preset.desc}</span>
+              <div className={`absolute inset-0 bg-gradient-to-br from-[--color-primary]/10 to-transparent opacity-0 transition-opacity duration-300 ${selectedPreset === preset.id ? 'opacity-100' : 'group-hover:opacity-50'}`}></div>
+              <div className="relative z-10">
+                <span className="text-2xl block mb-2">{preset.label.split(' ')[0]}</span>
+                <span className="text-sm font-bold block leading-tight">{preset.label.split(' ').slice(1).join(' ')}</span>
+                <span className="text-[10px] opacity-50 mt-1 block uppercase tracking-wider">{preset.desc}</span>
+              </div>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Voice & Generate */}
-      <div className="bg-[--color-card] border border-[--color-muted] rounded-2xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="flex-1">
-          <h3 className="font-semibold text-white flex items-center gap-2"><Mic size={18} className="text-[--color-primary]" /> Modifica Vocale</h3>
-          <p className="text-xs text-gray-500 mt-1">"Vorrei concentrarmi di più sui bicipiti" o "Aggiungi più esercizi di isolamento"</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <VoiceCommand onResult={handleVoice} />
-          <button 
-            onClick={() => handleGenerate()}
-            disabled={loading || !selectedPreset}
-            className="flex items-center gap-2 bg-[--color-primary] text-[--color-dark] font-bold px-6 py-3 rounded-xl hover:opacity-80 transition disabled:opacity-50"
-          >
-            {loading ? <Loader2 className="animate-spin" size={20} /> : '⚡ GENERA'}
-          </button>
+      {/* Voice & Generate - Glassmorphism */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-[--color-card] via-[#0e1a12] to-[--color-card] border border-[--color-muted] rounded-2xl p-5">
+        <div className="absolute inset-0 bg-gradient-to-r from-[--color-primary]/5 via-transparent to-[--color-primary]/5"></div>
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex-1">
+            <h3 className="font-bold text-white flex items-center gap-2 text-sm">
+              <div className="w-8 h-8 rounded-full bg-[--color-primary]/15 flex items-center justify-center">
+                <Mic size={16} className="text-[--color-primary]" />
+              </div>
+              Personalizzazione Vocale
+            </h3>
+            <p className="text-[11px] text-gray-500 mt-2 ml-10">"Concentrati sui bicipiti" · "Aggiungi superset" · "Evita panca piana"</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <VoiceCommand onResult={handleVoice} />
+            <button 
+              onClick={() => handleGenerate()}
+              disabled={loading || !selectedPreset}
+              className="group flex items-center gap-2 bg-gradient-to-r from-[--color-primary] to-emerald-400 text-[--color-dark] font-extrabold px-7 py-3.5 rounded-xl hover:shadow-[0_0_30px_rgba(0,255,65,0.3)] transition-all duration-300 disabled:opacity-40 disabled:shadow-none active:scale-95"
+            >
+              {loading ? <Loader2 className="animate-spin" size={20} /> : <span className="text-lg">⚡</span>}
+              <span>GENERA</span>
+            </button>
+          </div>
         </div>
       </div>
 

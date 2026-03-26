@@ -75,52 +75,89 @@ export default function MenuPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto pb-20 space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[--color-muted] pb-4 gap-4">
-        <div>
-          <h1 className="text-3xl font-bold">Menù Settimanale</h1>
-          <p className="text-gray-400 text-sm">Target: {profile.tdee} kcal | Proteine: {profile.protein_target || 150}g/pasto</p>
+    <div className="max-w-5xl mx-auto pb-20 space-y-8">
+      {/* Hero Header */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0f0a1a] via-[--color-card] to-[#0a1214] border border-[--color-primary]/20 p-8">
+        <div className="absolute top-0 left-0 w-72 h-72 bg-purple-500/5 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2"></div>
+        <div className="absolute bottom-0 right-0 w-56 h-56 bg-[--color-primary]/5 rounded-full blur-3xl translate-y-1/2 translate-x-1/2"></div>
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-4xl font-extrabold tracking-tight">
+              <span className="bg-gradient-to-r from-amber-400 via-orange-400 to-red-400 bg-clip-text text-transparent">Menù</span>
+              <span className="text-white ml-2">Settimanale</span>
+            </h1>
+            <p className="text-gray-500 mt-2 text-sm">35 pasti calibrati dall'AI sul tuo profilo. Genera, mangia, domina.</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 text-xs font-mono">
+              <div className="bg-[--color-dark] border border-[--color-muted] px-3 py-2 rounded-lg text-center">
+                <span className="block text-gray-500 mb-0.5">TDEE</span>
+                <span className="text-[--color-primary] font-bold">{profile.tdee} kcal</span>
+              </div>
+              <div className="bg-[--color-dark] border border-[--color-muted] px-3 py-2 rounded-lg text-center">
+                <span className="block text-gray-500 mb-0.5">PROTEINE</span>
+                <span className="text-white font-bold">{profile.protein_target || 150}g</span>
+              </div>
+              <div className="bg-[--color-dark] border border-[--color-muted] px-3 py-2 rounded-lg text-center">
+                <span className="block text-gray-500 mb-0.5">DIETA</span>
+                <span className="text-white font-bold">{profile.diet_type || 'Onnivoro'}</span>
+              </div>
+            </div>
+            <button 
+              onClick={() => handleGenerate()}
+              disabled={loading}
+              className="group flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-[--color-dark] font-extrabold px-6 py-3.5 rounded-xl hover:shadow-[0_0_30px_rgba(245,158,11,0.3)] transition-all duration-300 disabled:opacity-40 active:scale-95"
+            >
+              {loading ? <Loader2 className="animate-spin" size={18} /> : <RefreshCw size={18} />}
+              <span>{weeklyMenu ? 'Rigenera' : 'Genera IA'}</span>
+            </button>
+          </div>
         </div>
-        <button 
-          onClick={() => handleGenerate()}
-          disabled={loading}
-          className="flex items-center justify-center gap-2 bg-[--color-primary] text-[--color-dark] font-bold px-4 py-2 rounded-lg hover:opacity-80 transition disabled:opacity-50"
-        >
-          {loading ? <Loader2 className="animate-spin" size={18} /> : <RefreshCw size={18} />}
-          {weeklyMenu ? 'Rigenera' : 'Genera Menù IA'}
-        </button>
       </div>
 
-      {/* Preset Packages */}
-      <div className="space-y-3">
-        <h3 className="flex items-center gap-2 text-sm font-semibold text-gray-400 uppercase tracking-wider">
-          <Package size={16} /> Scegli un Pacchetto Base
+      {/* Preset Cards */}
+      <div className="space-y-4">
+        <h3 className="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-[0.2em]">
+          <div className="w-6 h-[2px] bg-amber-500 rounded-full"></div>
+          Pacchetto Base
         </h3>
-        <div className="flex flex-wrap gap-2">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {MEAL_PRESETS.map(preset => (
             <button
               key={preset.id}
               onClick={() => setSelectedPreset(selectedPreset === preset.id ? null : preset.id)}
-              className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all border ${
+              className={`group relative p-4 rounded-2xl text-left transition-all duration-300 border overflow-hidden ${
                 selectedPreset === preset.id
-                  ? 'bg-[--color-primary]/20 text-[--color-primary] border-[--color-primary]'
-                  : 'bg-[--color-card] text-gray-400 border-[--color-muted] hover:text-white hover:border-gray-500'
+                  ? 'bg-gradient-to-br from-amber-500/20 to-orange-500/5 text-amber-400 border-amber-500 shadow-[0_0_25px_rgba(245,158,11,0.12)] scale-[1.02]'
+                  : 'bg-[--color-card] text-gray-400 border-[--color-muted] hover:text-white hover:border-gray-600'
               }`}
             >
-              {preset.label}
-              <span className="block text-xs font-normal opacity-60">{preset.desc}</span>
+              <div className={`absolute inset-0 bg-gradient-to-br from-amber-500/10 to-transparent opacity-0 transition-opacity duration-300 ${selectedPreset === preset.id ? 'opacity-100' : 'group-hover:opacity-50'}`}></div>
+              <div className="relative z-10">
+                <span className="text-2xl block mb-2">{preset.label.split(' ')[0]}</span>
+                <span className="text-sm font-bold block leading-tight">{preset.label.split(' ').slice(1).join(' ')}</span>
+                <span className="text-[10px] opacity-50 mt-1 block uppercase tracking-wider">{preset.desc}</span>
+              </div>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Voice Modification */}
-      <div className="bg-[--color-card] border border-[--color-muted] rounded-2xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-          <h3 className="font-semibold text-white flex items-center gap-2"><Mic size={18} className="text-[--color-primary]" /> Modifica Vocale</h3>
-          <p className="text-xs text-gray-500 mt-1">Parla per personalizzare il menù: "Vorrei più pesce" o "Aggiungi snack proteici"</p>
+      {/* Voice Modification - Glassmorphism */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-[--color-card] via-[#14100e] to-[--color-card] border border-[--color-muted] rounded-2xl p-5">
+        <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 via-transparent to-amber-500/5"></div>
+        <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex-1">
+            <h3 className="font-bold text-white flex items-center gap-2 text-sm">
+              <div className="w-8 h-8 rounded-full bg-amber-500/15 flex items-center justify-center">
+                <Mic size={16} className="text-amber-400" />
+              </div>
+              Personalizzazione Vocale
+            </h3>
+            <p className="text-[11px] text-gray-500 mt-2 ml-10">"Vorrei più pesce" · "Aggiungi snack proteici" · "Niente latticini"</p>
+          </div>
+          <VoiceCommand onResult={handleVoice} />
         </div>
-        <VoiceCommand onResult={handleVoice} />
       </div>
 
       {error && <div className="p-4 bg-red-500/20 text-red-400 rounded-xl border border-red-500/50 text-sm">{error}</div>}
