@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useUser } from '../context/UserContext'
 import { Loader2, RefreshCw, Mic, Package } from 'lucide-react'
 import { VoiceCommand } from '../components/VoiceCommand'
@@ -15,14 +15,13 @@ const MEAL_PRESETS = [
 ]
 
 export default function MenuPage() {
-  const { profile, weeklyMenu, setWeeklyMenu } = useUser()
+  const { user, profile, weeklyMenu, setWeeklyMenu } = useUser()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [selectedDay, setSelectedDay] = useState('Lunedì')
   const [selectedPreset, setSelectedPreset] = useState(null)
   const [voiceMod, setVoiceMod] = useState('')
   const [completedMeals, setCompletedMeals] = useState([])
-  const { user } = useUser()
 
   useEffect(() => {
     // Fetch today's completed meals
