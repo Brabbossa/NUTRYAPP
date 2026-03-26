@@ -57,6 +57,19 @@ export function WorkoutTimer({ plan, onComplete }) {
   const currentExercise = exercises[exerciseIdx]
   const totalSets = currentExercise ? parseSerie(currentExercise.serie) : 0
   const restDuration = currentExercise ? parseRecupero(currentExercise.recupero) : 60
+  
+  // Ref for random motivation timeout
+  const motivationTimeoutRef = useRef(null)
+
+  // Play fart sound
+  const playFartSound = useCallback(() => {
+    try {
+      const audio = new Audio('https://www.myinstants.com/media/sounds/fart-01.mp3') // Basic fart sound
+      audio.volume = 1.0;
+      audio.play().catch(e => console.log('Audio play failed', e))
+    } catch(err) {}
+  }, [])
+
 
   // Total elapsed timer
   useEffect(() => {
@@ -94,6 +107,24 @@ export function WorkoutTimer({ plan, onComplete }) {
     }
   }, [phase, countdown])
 
+  // Random motivation phrase during EXERCISE phase
+  useEffect(() => {
+    if (phase === PHASE.EXERCISE && !isPaused && voiceEnabled) {
+      const scheduleNext = () => {
+        // Random tra 8 e 40 secondi
+        const delay = Math.floor(Math.random() * (40000 - 8000 + 1)) + 8000;
+        motivationTimeoutRef.current = setTimeout(() => {
+          speak("Forza cazzo spingi uomo!! QUella fica non si leccherà da sola!");
+          scheduleNext(); // Schedule the next one
+        }, delay);
+      };
+      scheduleNext();
+    }
+    return () => {
+      if (motivationTimeoutRef.current) clearTimeout(motivationTimeoutRef.current);
+    };
+  }, [phase, isPaused, voiceEnabled])
+
   const voiceAnnounce = useCallback((text) => {
     if (voiceEnabled) speak(text)
   }, [voiceEnabled])
@@ -111,6 +142,7 @@ export function WorkoutTimer({ plan, onComplete }) {
 
   // Complete current set → go to rest
   const completeSet = () => {
+    playFartSound()
     const rest = restDuration
     setCountdown(rest)
     setTotalTime(rest)
@@ -120,6 +152,7 @@ export function WorkoutTimer({ plan, onComplete }) {
 
   // After rest → next set or next exercise
   const goToNextSet = () => {
+    playFartSound()
     const nextSet = setIdx + 1
     if (nextSet < totalSets) {
       // Next set of same exercise
@@ -277,6 +310,15 @@ export function WorkoutTimer({ plan, onComplete }) {
             Rep <strong className="text-white">{currentExercise?.ripetizioni}</strong>
           </span>
         </div>
+
+        {/* Big Timer for Elapsed Time (only during EXERCISE) */}
+        {phase === PHASE.EXERCISE && (
+          <div className="my-6">
+            <div className="text-[5rem] md:text-[6rem] leading-none font-mono font-black text-[--color-primary] tracking-tighter drop-shadow-[0_0_15px_rgba(0,255,65,0.4)]">
+              {formatTime(elapsed)}
+            </div>
+          </div>
+        )}
 
         {/* Timer Ring (only during REST) */}
         {phase === PHASE.REST && (
