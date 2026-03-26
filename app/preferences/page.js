@@ -33,8 +33,12 @@ export default function PreferencesPage() {
   }
 
   const calculateTDEE = (data) => {
-    const { weight, height, age, activity_level } = data
-    let bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5
+    const { weight, height, age, activity_level, gender } = data
+    // Uomo: (10 × peso) + (6.25 × altezza) - (5 × età) + 5
+    // Donna: (10 × peso) + (6.25 × altezza) - (5 × età) - 161
+    let bmr = (10 * weight) + (6.25 * height) - (5 * age)
+    bmr += (gender === 'Donna' ? -161 : 5)
+
     const multipliers = {
       'Sedentario': 1.2, 'Leggero': 1.375, 'Moderato': 1.55,
       'Attivo': 1.725, 'Atleta': 1.9
