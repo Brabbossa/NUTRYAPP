@@ -243,6 +243,23 @@ export default function WorkoutPage() {
                 <CheckCircle2 size={24} /> Allenamento salvato con successo.
               </div>
             )}
+            
+            {!isSaved && (
+              <div className="mt-6 p-4 bg-[--color-card] rounded-xl border border-[--color-muted]/50">
+                <h5 className="text-xs font-bold text-[--color-primary] uppercase tracking-widest mb-2">Guida all'RPE (Sforzo Percepito)</h5>
+                <p className="text-[11px] text-gray-500 leading-relaxed">
+                  L'<strong>RPE (Rate of Perceived Exertion)</strong> è una scala da 1 a 10 che misura quanto è stato duro l'allenamento:
+                  <br /><br />
+                  • <strong>10:</strong> Sforzo Massimo. Non potevi fare un'altra ripetizione (Cedimento).
+                  <br />
+                  • <strong>8-9:</strong> Molto Duro. Potevi fare forse 1 o 2 ripetizioni in più.
+                  <br />
+                  • <strong>6-7:</strong> Moderato/Vigoro. Sentivi il muscolo lavorare ma avevi ancora margine.
+                  <br /><br />
+                  <span className="text-[--color-primary]/70 italic">Synapse analizzerà questo valore per aumentare o diminuire la difficoltà della tua prossima scheda.</span>
+                </p>
+              </div>
+            )}
           </div>
         </div>
       )}
