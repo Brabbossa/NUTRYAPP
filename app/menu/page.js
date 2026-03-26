@@ -80,7 +80,7 @@ export default function MenuPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-[--color-muted] pb-4 gap-4">
         <div>
           <h1 className="text-3xl font-bold">Menù Settimanale</h1>
-          <p className="text-gray-400 text-sm">Target: {profile.tdee} kcal | Proteine: {profile.proteinTarget}g/pasto</p>
+          <p className="text-gray-400 text-sm">Target: {profile.tdee} kcal | Proteine: {profile.protein_target || 150}g/pasto</p>
         </div>
         <button 
           onClick={() => handleGenerate()}

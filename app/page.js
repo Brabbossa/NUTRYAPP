@@ -20,7 +20,7 @@ export default function Home() {
           Bentornato su <span className="text-primary">Synapse</span>
         </h1>
         <p className="text-gray-400 mt-2 text-lg">
-          TDEE: {profile.tdee} kcal | Obiettivo Proteine: ~{profile.proteinTarget * 5}g/giorno
+          TDEE: {profile.tdee} kcal | Obiettivo Proteine: ~{(profile.protein_target || 150) * 5}g/giorno
         </p>
       </header>
 
