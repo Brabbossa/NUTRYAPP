@@ -17,14 +17,15 @@ export async function POST(req) {
 Genera un piano alimentare settimanale (da Lunedì a Domenica) per un utente con questi parametri:
 - Peso: ${profile.weight}kg, Altezza: ${profile.height}cm, Età: ${profile.age}
 - Fabbisogno Stimato (TDEE): ${profile.tdee} kcal/giorno
-- Target Macronutrienti: Proteine ~${profile.proteinTarget}g per pasto.
-- Limite Zuccheri: Massimo ${profile.sugarLimit}g al giorno totali.
-- Dieta: ${profile.dietType}
+- Target Macronutrienti: Proteine ~${profile.protein_target || 150}g per pasto.
+- Limite Zuccheri: Massimo ${profile.sugar_limit || 50}g al giorno totali.
+- Dieta: ${profile.diet_type || 'Generica'}
 - Allergie/Intolleranze: ${profile.allergies || 'Nessuna'}
 ${extraInstruction}
 
 REGOLE FONDAMENTALI:
-1. OBBLIGO DEI 5 PASTI: Per OGNI SINGOLO GIORNO della settimana devi generare ESATTAMENTE 5 pasti: "Colazione", "Spuntino 1", "Pranzo", "Spuntino 2", "Cena". Totale: 35 pasti esatti. Nessuna eccezione.
+1. DEVI SCRIVERE UN ARRAY, NON UN OGGETTO, PER I PASTI DI OGNI GIORNO.
+2. OBBLIGO DEI 5 PASTI: Per OGNI SINGOLO GIORNO della settimana devi generare ESATTAMENTE 5 pasti: "Colazione", "Spuntino 1", "Pranzo", "Spuntino 2", "Cena". Totale: 35 pasti esatti. Nessuna eccezione.
 2. NESSUNA ABBREVIAZIONE: Il modello matematico fallirà se usi abbreviazioni, puntini di sospensione (...) o frasi come "stessi 5 pasti". DEVI stampare l'intero JSON array per ogni giorno di tutti i 7 giorni.
 3. ESTREMA VARIETÀ E GUSTO: Ispira le ricette a menù salutari, deliziosi e vari. Non ripetere gli stessi alimenti di continuo; alterna fonti proteiche (pollo, pesce, tofu, uova, legumi, vitello magro) e carboidrati (riso basmati, quinoa, patate dolci, pasta integrale, avena). Usa spezie ed erbe aromatiche nelle descrizioni.
 

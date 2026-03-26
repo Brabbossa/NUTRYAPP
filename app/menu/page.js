@@ -151,13 +151,13 @@ export default function MenuPage() {
           </div>
 
           <div className="grid grid-cols-1 gap-4">
-            {weeklyMenu.menu[selectedDay]?.map((meal, i) => (
+            {(Array.isArray(weeklyMenu.menu[selectedDay]) ? weeklyMenu.menu[selectedDay] : []).map((meal, i) => (
               <div key={i} className="bg-[--color-card] border border-[--color-muted] rounded-2xl p-6 flex flex-col md:flex-row gap-6 hover:border-[--color-primary]/50 transition relative overflow-hidden">
                 <div className="absolute left-0 top-0 bottom-0 w-1 bg-[--color-primary]/40"></div>
                 <div className="flex-1 space-y-3">
                   <div className="flex items-center gap-3">
-                    <span className="bg-[--color-dark] text-xs font-bold text-gray-400 px-2 py-1 rounded border border-[--color-muted] uppercase tracking-wider">{meal.nome_pasto}</span>
-                    <h3 className="text-lg font-bold text-[--color-primary]">{meal.titolo}</h3>
+                    <span className="bg-[--color-dark] text-xs font-bold text-gray-400 px-2 py-1 rounded border border-[--color-muted] uppercase tracking-wider">{meal.nome_pasto || 'PASTO'}</span>
+                    <h3 className="text-lg font-bold text-[--color-primary]">{meal.titolo || 'Pasto Generico'}</h3>
                   </div>
                   <p className="text-sm text-gray-400"><strong className="text-white">Ingredienti:</strong> {meal.ingredienti}</p>
                   <p className="text-sm text-gray-400"><strong className="text-white">Istruzioni:</strong> {meal.istruzioni}</p>
