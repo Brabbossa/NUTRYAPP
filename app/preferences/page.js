@@ -68,6 +68,18 @@ export default function PreferencesPage() {
         </div>
       )}
 
+      <div className="bg-primary/10 border border-primary/20 rounded-2xl p-6 mb-6">
+        <h3 className="text-primary font-bold text-lg mb-2 flex items-center gap-2">💡 Ottimizza l'Intelligenza Artificiale</h3>
+        <p className="text-sm text-gray-300 mb-3">
+          I dati che inserisci qui sono fondamentali. <strong>Synapse Professional</strong> (la nostra AI) li utilizzerà come core per calcolare ogni tuo risultato:
+        </p>
+        <ul className="text-sm text-gray-400 list-disc pl-5 space-y-2">
+          <li><strong>Menù Settimanale:</strong> Le grammature di ogni singolo piatto verranno calcolate matematicamente per rispettare il tuo TDEE e i tuoi target di proteine e zuccheri in base a peso, altezza ed età. Qualsiasi allergia verrà evitata rigorosamente.</li>
+          <li><strong>Workout Periodizzato:</strong> L'esperienza, l'età e il livello di attività determineranno il volume (serie e ripetizioni) e i tempi di recupero ideali. Inoltre, i parametri RPE dei tuoi allenamenti passati calibreranno il sovraccarico progressivo.</li>
+        </ul>
+        <p className="text-sm text-primary mt-3 font-semibold">📍 Più sei preciso in questa pagina, più estremi saranno i tuoi risultati muscolari.</p>
+      </div>
+
       {/* Dati Corporei */}
       <section className="bg-card p-6 rounded-2xl border border-muted space-y-4">
         <h2 className="text-xl font-semibold text-primary">Dati Corporei</h2>

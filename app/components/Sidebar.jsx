@@ -10,10 +10,10 @@ export function Sidebar() {
   const pathname = usePathname()
 
   const links = [
+    { href: '/preferences', label: 'Preferences', icon: Settings },
     { href: '/', label: 'Dashboard', icon: Home },
     { href: '/menu', label: 'Menù Settimanale', icon: Utensils },
     { href: '/workout', label: 'Workout Periodizzato', icon: Dumbbell },
-    { href: '/preferences', label: 'Preferences', icon: Settings },
   ]
 
   const toggle = () => setIsOpen(!isOpen)

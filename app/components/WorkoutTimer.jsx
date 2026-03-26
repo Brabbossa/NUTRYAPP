@@ -41,6 +41,17 @@ const PHASE = {
   FINISHED: 'finished',
 }
 
+// Random goliardic quotes for motivation
+const MOTIVATIONAL_PHRASES = [
+  "Forza cazzo spingi uomo!! Quella fica non si leccherà da sola!",
+  "Sveglia!! Meno chiacchiere e più ghisa brutto secco!",
+  "Sei venuto qui per pettinare le bambole o per spaccare i dischi?! Tira!",
+  "Muovi quel culo! Il dolore di oggi è la figa di domani!!",
+  "Ancora una! Se molli adesso sei un flaccido senza speranza!",
+  "Daje!! Sfondiamo questo pavimento con quei manubri!!",
+  "Urla!! Fatti sentire!! Spingi come se non ci fosse un cazzo di domani!"
+];
+
 export function WorkoutTimer({ plan, onComplete }) {
   const [phase, setPhase] = useState(PHASE.IDLE)
   const [exerciseIdx, setExerciseIdx] = useState(0)
@@ -117,7 +128,8 @@ export function WorkoutTimer({ plan, onComplete }) {
         // Random tra 8 e 40 secondi
         const delay = Math.floor(Math.random() * (40000 - 8000 + 1)) + 8000;
         motivationTimeoutRef.current = setTimeout(() => {
-          speak("Forza cazzo spingi uomo!! QUella fica non si leccherà da sola!");
+          const randomPhrase = MOTIVATIONAL_PHRASES[Math.floor(Math.random() * MOTIVATIONAL_PHRASES.length)];
+          speak(randomPhrase);
           scheduleNext(); // Schedule the next one
         }, delay);
       };
