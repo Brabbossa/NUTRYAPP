@@ -299,7 +299,31 @@ ${events}END:VCALENDAR`
       {/* 🔔 Notifiche & Calendario */}
       <section className="bg-card p-6 rounded-2xl border border-primary/30 space-y-5 shadow-[0_0_20px_rgba(0,255,65,0.05)]">
         <h2 className="text-xl font-semibold text-primary flex items-center gap-2"><Bell size={22}/> Notifiche & Calendario</h2>
-        <p className="text-sm text-gray-400">Attiva le notifiche push per ricevere un promemoria ad ogni pasto e prima dell'allenamento. Esporta il programma nel calendario del telefono per avere tutto sincronizzato.</p>
+        
+        {/* Blocco Istruzioni */}
+        <div className="bg-primary/10 border border-primary/20 rounded-xl p-5 space-y-3">
+          <h3 className="text-primary font-bold flex items-center gap-2">📖 Come Funziona</h3>
+          <div className="space-y-3 text-sm text-gray-300">
+            <div>
+              <p className="font-bold text-white mb-1">🔔 Notifiche Push</p>
+              <ul className="list-disc pl-5 space-y-1 text-gray-400">
+                <li>Clicca <strong className="text-white">"Attiva Notifiche"</strong> e concedi il permesso quando il browser te lo chiede.</li>
+                <li>Una volta attivate, clicca <strong className="text-white">"Programma Notifiche Oggi"</strong>: riceverai un avviso sul telefono ad ogni orario pasto (Colazione, Spuntini, Pranzo, Cena) e all'orario del Workout che hai impostato sopra.</li>
+                <li>Le notifiche funzionano anche con il telefono bloccato, a patto che l'app sia stata aperta almeno una volta oggi.</li>
+                <li><strong className="text-yellow-400">⚠️ iPhone:</strong> Per ricevere le notifiche su iPhone, devi prima aggiungere l'app alla Home Screen (Safari → Condividi → "Aggiungi alla schermata Home"). Solo da lì le notifiche PWA funzionano su iOS.</li>
+              </ul>
+            </div>
+            <div>
+              <p className="font-bold text-white mb-1">📅 Sincronizzazione Calendario</p>
+              <ul className="list-disc pl-5 space-y-1 text-gray-400">
+                <li>Clicca <strong className="text-white">"Esporta nel Calendario"</strong> per scaricare un file <code className="bg-dark px-1 rounded text-primary">.ics</code> con 4 settimane di workout programmati.</li>
+                <li><strong className="text-white">iPhone:</strong> Apri il file scaricato → ti chiederà <em>"Aggiungere tutti gli eventi?"</em> → Conferma. Troverai gli allenamenti nel Calendario Apple con allarme 15 minuti prima.</li>
+                <li><strong className="text-white">Android:</strong> Apri il file .ics → Google Calendar importerà automaticamente tutti gli eventi.</li>
+                <li>Se cambi l'orario del workout, riesporta il file per aggiornare il calendario.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Notification Button */}
