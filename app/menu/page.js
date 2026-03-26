@@ -77,13 +77,13 @@ export default function MenuPage() {
   return (
     <div className="max-w-5xl mx-auto pb-20 space-y-8">
       {/* Hero Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0f0a1a] via-[--color-card] to-[#0a1214] border border-[--color-primary]/20 p-8">
-        <div className="absolute top-0 left-0 w-72 h-72 bg-purple-500/5 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2"></div>
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0a1a0f] via-[--color-card] to-[#0f1a14] border border-[--color-primary]/20 p-8">
+        <div className="absolute top-0 left-0 w-72 h-72 bg-[--color-primary]/5 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2"></div>
         <div className="absolute bottom-0 right-0 w-56 h-56 bg-[--color-primary]/5 rounded-full blur-3xl translate-y-1/2 translate-x-1/2"></div>
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-4xl font-extrabold tracking-tight">
-              <span className="bg-gradient-to-r from-amber-400 via-orange-400 to-red-400 bg-clip-text text-transparent">Menù</span>
+              <span className="bg-gradient-to-r from-[--color-primary] via-emerald-400 to-teal-300 bg-clip-text text-transparent">Menù</span>
               <span className="text-white ml-2">Settimanale</span>
             </h1>
             <p className="text-gray-500 mt-2 text-sm">35 pasti calibrati dall'AI sul tuo profilo. Genera, mangia, domina.</p>
@@ -106,7 +106,7 @@ export default function MenuPage() {
             <button 
               onClick={() => handleGenerate()}
               disabled={loading}
-              className="group flex items-center gap-2 bg-gradient-to-r from-amber-500 to-orange-500 text-[--color-dark] font-extrabold px-6 py-3.5 rounded-xl hover:shadow-[0_0_30px_rgba(245,158,11,0.3)] transition-all duration-300 disabled:opacity-40 active:scale-95"
+              className="group flex items-center gap-2 bg-gradient-to-r from-[--color-primary] to-emerald-400 text-[--color-dark] font-extrabold px-6 py-3.5 rounded-xl hover:shadow-[0_0_30px_rgba(0,255,65,0.3)] transition-all duration-300 disabled:opacity-40 active:scale-95"
             >
               {loading ? <Loader2 className="animate-spin" size={18} /> : <RefreshCw size={18} />}
               <span>{weeklyMenu ? 'Rigenera' : 'Genera IA'}</span>
@@ -118,7 +118,7 @@ export default function MenuPage() {
       {/* Preset Cards */}
       <div className="space-y-4">
         <h3 className="flex items-center gap-2 text-xs font-bold text-gray-500 uppercase tracking-[0.2em]">
-          <div className="w-6 h-[2px] bg-amber-500 rounded-full"></div>
+          <div className="w-6 h-[2px] bg-[--color-primary] rounded-full"></div>
           Pacchetto Base
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
@@ -128,8 +128,8 @@ export default function MenuPage() {
               onClick={() => setSelectedPreset(selectedPreset === preset.id ? null : preset.id)}
               className={`group p-5 rounded-2xl text-left transition-all duration-300 border ${
                 selectedPreset === preset.id
-                  ? 'bg-[#1a1a2e] text-amber-400 border-amber-500 shadow-[0_0_20px_rgba(245,158,11,0.15)]'
-                  : 'bg-[#1a1a2e] text-gray-400 border-[#2a2a3e] hover:border-amber-500/50 hover:shadow-[0_0_15px_rgba(245,158,11,0.08)] hover:text-white hover:-translate-y-0.5'
+                  ? 'bg-[#1a1a2e] text-[--color-primary] border-[--color-primary] shadow-[0_0_20px_rgba(0,255,65,0.15)]'
+                  : 'bg-[#1a1a2e] text-gray-400 border-[#2a2a3e] hover:border-[--color-primary]/50 hover:shadow-[0_0_15px_rgba(0,255,65,0.08)] hover:text-white hover:-translate-y-0.5'
               }`}
             >
               <span className="text-3xl block mb-3">{preset.label.split(' ')[0]}</span>
@@ -141,13 +141,13 @@ export default function MenuPage() {
       </div>
 
       {/* Voice Modification - Glassmorphism */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-[--color-card] via-[#14100e] to-[--color-card] border border-[--color-muted] rounded-2xl p-5">
-        <div className="absolute inset-0 bg-gradient-to-r from-amber-500/5 via-transparent to-amber-500/5"></div>
+      <div className="relative overflow-hidden bg-gradient-to-r from-[--color-card] via-[#0e1a12] to-[--color-card] border border-[--color-muted] rounded-2xl p-5">
+        <div className="absolute inset-0 bg-gradient-to-r from-[--color-primary]/5 via-transparent to-[--color-primary]/5"></div>
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex-1">
             <h3 className="font-bold text-white flex items-center gap-2 text-sm">
-              <div className="w-8 h-8 rounded-full bg-amber-500/15 flex items-center justify-center">
-                <Mic size={16} className="text-amber-400" />
+              <div className="w-8 h-8 rounded-full bg-[--color-primary]/15 flex items-center justify-center">
+                <Mic size={16} className="text-[--color-primary]" />
               </div>
               Personalizzazione Vocale
             </h3>
