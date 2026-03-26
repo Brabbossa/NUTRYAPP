@@ -15,7 +15,7 @@ const MEAL_PRESETS = [
 ]
 
 export default function MenuPage() {
-  const { user, profile, weeklyMenu, setWeeklyMenu } = useUser()
+  const { user, profile, weeklyMenu, setWeeklyMenu, triggerEasterEgg } = useUser()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [selectedDay, setSelectedDay] = useState('Lunedì')
@@ -45,6 +45,7 @@ export default function MenuPage() {
   const days = weeklyMenu?.menu ? Object.keys(weeklyMenu.menu) : daysStr
 
   const handleGenerate = async (extraVoice = '') => {
+    triggerEasterEgg()
     setLoading(true)
     setError('')
     const presetMod = selectedPreset ? MEAL_PRESETS.find(p => p.id === selectedPreset)?.mod : ''

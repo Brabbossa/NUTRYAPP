@@ -2,8 +2,10 @@
 
 import { useState } from 'react'
 import { submitRpe } from '../actions'
+import { useUser } from '../context/UserContext'
 
 export function WorkoutGenerator({ initialWorkout }) {
+  const { triggerEasterEgg } = useUser()
   const [muscle, setMuscle] = useState('')
   const [loading, setLoading] = useState(false)
   const [workout, setWorkout] = useState(initialWorkout)
@@ -12,6 +14,7 @@ export function WorkoutGenerator({ initialWorkout }) {
 
   const handleGenerate = async () => {
     if (!muscle) return;
+    triggerEasterEgg();
     setLoading(true);
     const res = await fetch('/api/workout', {
       method: 'POST',

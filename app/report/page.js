@@ -6,7 +6,7 @@ import { Activity, Brain } from 'lucide-react'
 import { supabase } from '../lib/supabaseClient'
 
 export default function ReportPage() {
-  const { user, profile } = useUser()
+  const { user, profile, triggerEasterEgg } = useUser()
   const [loading, setLoading] = useState(false)
   const [reportHtml, setReportHtml] = useState(null)
   const [error, setError] = useState('')
@@ -37,6 +37,7 @@ export default function ReportPage() {
   }, [user]);
 
   const generateReport = async () => {
+    triggerEasterEgg();
     setLoading(true);
     setError('');
     try {

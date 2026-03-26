@@ -1,6 +1,7 @@
 import './globals.css'
 import { UserProvider } from './context/UserContext'
 import { Sidebar } from './components/Sidebar'
+import { EasterEgg } from './components/EasterEgg'
 
 export const viewport = {
   width: 'device-width',
@@ -26,6 +27,7 @@ export default function RootLayout({ children }) {
     <html lang="it">
       <body className="bg-dark text-white font-sans overflow-x-hidden selection:bg-primary selection:text-dark">
         <UserProvider>
+          <EasterEgg />
           <div className="flex min-h-screen w-full relative">
             <Sidebar />
             <main className="flex-1 w-full md:ml-64 p-4 md:p-8 overflow-y-auto">

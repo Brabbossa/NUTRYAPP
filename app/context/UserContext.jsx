@@ -49,6 +49,16 @@ export function UserProvider({ children }) {
   const [weeklyMenu, setWeeklyMenu] = useState(null);
   const [workoutHistory, setWorkoutHistory] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
+
+  const triggerEasterEgg = () => {
+    console.log('UserContext: triggerEasterEgg called');
+    setIsGeneratingAI(true);
+    setTimeout(() => {
+      console.log('UserContext: resetting isGeneratingAI to false');
+      setIsGeneratingAI(false);
+    }, 3500); // 3.5 seconds to cover the 3s animation + some buffer
+  };
 
   useEffect(() => {
     // Check active session
@@ -172,8 +182,17 @@ export function UserProvider({ children }) {
     if (!user) return;
     
     // 1. Reset DB: Delete all history for this user
-    await supabase.from('meals_history').delete().eq('user_id', user.id);
-    await supabase.from('workout_history').delete().eq('user_id', user.id);
+    const { error: errMeals } = await supabase.from('meals_history').delete().eq('user_id', user.id);
+    if (errMeals) {
+      console.error('Errore delete meals:', errMeals);
+      throw new Error('Impossibile cancellare i pasti: ' + errMeals.message);
+    }
+
+    const { error: errWorkouts } = await supabase.from('workout_history').delete().eq('user_id', user.id);
+    if (errWorkouts) {
+      console.error('Errore delete workouts:', errWorkouts);
+      throw new Error('Impossibile cancellare i workout: ' + errWorkouts.message);
+    }
     
     // 2. Reset Profile to minimum defaults on DB
     const minProfile = {
@@ -184,7 +203,11 @@ export function UserProvider({ children }) {
       equipment: 'Palestra Completa', workout_duration: '60 min', workout_frequency: '3 giorni/settimana',
       injuries: null, water_target: 2.5, supplements: null, meals_out: 'Mai'
     };
-    await supabase.from('profiles').update(minProfile).eq('id', user.id);
+    const { error: errProfile } = await supabase.from('profiles').update(minProfile).eq('id', user.id);
+    if (errProfile) {
+      console.error('Errore reset profile:', errProfile);
+      throw new Error('Impossibile resettare il profilo: ' + errProfile.message);
+    }
 
     // 3. Clear Local State
     setProfile(minProfile);
@@ -194,7 +217,13 @@ export function UserProvider({ children }) {
   };
 
   return (
-    <UserContext.Provider value={{ user, profile, updateProfile, weeklyMenu, setWeeklyMenu, workoutHistory, setWorkoutHistory, saveWorkout, resetAllData }}>
+    <UserContext.Provider value={{ 
+      user, profile, updateProfile, 
+      weeklyMenu, setWeeklyMenu, 
+      workoutHistory, setWorkoutHistory, 
+      saveWorkout, resetAllData,
+      isGeneratingAI, triggerEasterEgg
+    }}>
       {children}
     </UserContext.Provider>
   );

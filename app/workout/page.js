@@ -17,7 +17,7 @@ const WORKOUT_PRESETS = [
 ]
 
 export default function WorkoutPage() {
-  const { profile, workoutHistory, saveWorkout } = useUser()
+  const { profile, workoutHistory, saveWorkout, triggerEasterEgg } = useUser()
   const [selectedPreset, setSelectedPreset] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -27,6 +27,7 @@ export default function WorkoutPage() {
   const [timerActive, setTimerActive] = useState(false)
 
   const handleGenerate = async (voiceMod = '') => {
+    triggerEasterEgg()
     const preset = WORKOUT_PRESETS.find(p => p.id === selectedPreset)
     const target = preset?.target || 'Full Body'
     

@@ -528,6 +528,7 @@ ${events}END:VCALENDAR`
                   window.location.href = '/'; // Ricarica la pagina da capo con i default minimi
                 } catch(e) {
                   console.error('Errore Reset:', e)
+                  window.alert("Errore durante il reset: " + e.message)
                 }
               }
             }}
