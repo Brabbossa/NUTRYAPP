@@ -294,6 +294,43 @@ ${events}END:VCALENDAR`
           </div>
         </div>
 
+        <div className="pt-2">
+          <h4 className="text-sm font-semibold text-gray-300 mb-3 uppercase tracking-wider">Logistica Allenamento & Infortuni</h4>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Attrezzatura Disponibile</label>
+              <select name="equipment" value={formData.equipment || 'Palestra Completa'} onChange={handleChange} className={inputClass}>
+                <option value="Palestra Completa">Palestra Completa (Macchinari + Pesi Liberi)</option>
+                <option value="Solo Manubri">Solo Manubri / Panca</option>
+                <option value="Corpo Libero">Corpo Libero / Calisthenics</option>
+                <option value="Elastici">Elastici / Bande di resistenza</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Durata Sessione</label>
+              <select name="workout_duration" value={formData.workout_duration || '60 min'} onChange={handleChange} className={inputClass}>
+                <option value="30 min">Express (30 min)</option>
+                <option value="45 min">Breve (45 min)</option>
+                <option value="60 min">Standard (60 min)</option>
+                <option value="90 min">Lunga (90 min)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Frequenza Settimanale</label>
+              <select name="workout_frequency" value={formData.workout_frequency || '3 giorni/settimana'} onChange={handleChange} className={inputClass}>
+                <option value="2 giorni/settimana">2 Giorni a Settimana</option>
+                <option value="3 giorni/settimana">3 Giorni a Settimana</option>
+                <option value="4 giorni/settimana">4 Giorni a Settimana</option>
+                <option value="5+ giorni/settimana">5+ Giorni a Settimana</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-red-400 mb-1 font-semibold">Limitazioni / Infortuni</label>
+              <input type="text" name="injuries" value={formData.injuries || ''} onChange={handleChange} placeholder="Es. Ginocchio dx, Spalla, Nessuna..." className="w-full bg-red-500/10 border border-red-500/50 rounded p-2 text-white outline-none focus:border-red-400" />
+            </div>
+          </div>
+        </div>
+
         <div className="pt-4 border-t border-muted bg-dark rounded-xl p-4 flex items-center justify-between">
           <div>
             <p className="text-sm text-gray-400">TDEE Stimato (Fabbisogno Calorico Giornaliero)</p>

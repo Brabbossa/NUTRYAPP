@@ -153,6 +153,23 @@ export default function WorkoutPage() {
           )}
           
           <div className="p-6 space-y-4">
+            {currentPlan.avviso_sicurezza && currentPlan.avviso_sicurezza !== "''" && currentPlan.avviso_sicurezza !== 'Nessuna' && (
+              <div className="bg-red-500/10 border border-red-500/30 p-4 rounded-xl flex items-start gap-3">
+                <span className="text-red-400 text-xl">⚠️</span>
+                <div>
+                  <h4 className="text-red-400 font-bold mb-1">Avviso Sicurezza</h4>
+                  <p className="text-sm text-red-200">{currentPlan.avviso_sicurezza}</p>
+                </div>
+              </div>
+            )}
+            
+            {currentPlan.nota_personale && (
+              <div className="bg-[--color-primary]/10 border border-[--color-primary]/30 p-4 rounded-xl mb-6">
+                <p className="text-sm text-gray-300 italic">" {currentPlan.nota_personale} "</p>
+                <p className="text-xs text-[--color-primary] font-bold mt-2 text-right">- Synapse AI Trainer</p>
+              </div>
+            )}
+
             {(Array.isArray(currentPlan.esercizi) ? currentPlan.esercizi : []).map((ex, i) => (
               <div key={i} className="bg-[--color-dark] border border-[--color-muted] p-4 rounded-xl hover:border-[--color-primary] transition">
                 <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
