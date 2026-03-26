@@ -8,16 +8,27 @@ import { Loader2 } from 'lucide-react';
 const UserContext = createContext();
 
 const defaultProfile = {
+  gender: 'Uomo',
   weight: 75,
   height: 180,
   age: 25,
   body_fat: 15,
+  chest_cm: '',
+  waist_cm: '',
+  hips_cm: '',
+  thighs_cm: '',
   activity_level: 'Attivo',
+  work_type: 'Studente/Scrivania',
+  training_experience: 'Intermedio',
+  goal: 'Ipertrofia',
   tdee: 2500,
   protein_target: 150,
   sugar_limit: 50,
+  water_target: 2.5,
   diet_type: 'Onnivoro',
   allergies: '',
+  supplements: '',
+  meals_out: 'Mai',
   meal_times: {
     breakfast: '08:00',
     snack1: '10:30',

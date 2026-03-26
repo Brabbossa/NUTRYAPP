@@ -199,13 +199,23 @@ ${events}END:VCALENDAR`
         <p className="text-sm text-primary mt-3 font-semibold">📍 Più sei preciso in questa pagina, più estremi saranno i tuoi risultati muscolari.</p>
       </div>
 
-      {/* Dati Corporei */}
-      <section className="bg-card p-6 rounded-2xl border border-muted space-y-4">
-        <h2 className="text-xl font-semibold text-primary">Dati Corporei</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {/* Dati Corporei & Anamnesi PT */}
+      <section className="bg-card p-6 rounded-2xl border border-muted space-y-6">
+        <div className="flex items-center gap-2 border-b border-muted pb-3 mb-2">
+          <h2 className="text-xl font-semibold text-primary">Dati Corporei & Anamnesi</h2>
+        </div>
+        
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Sesso</label>
+            <select name="gender" value={formData.gender} onChange={handleChange} className={inputClass}>
+              <option value="Uomo">Uomo</option>
+              <option value="Donna">Donna</option>
+            </select>
+          </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1">Peso (kg)</label>
-            <input type="number" name="weight" value={formData.weight} onChange={handleChange} className={inputClass} />
+            <input type="number" step="0.1" name="weight" value={formData.weight} onChange={handleChange} className={inputClass} />
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1">Altezza (cm)</label>
@@ -216,51 +226,133 @@ ${events}END:VCALENDAR`
             <input type="number" name="age" value={formData.age} onChange={handleChange} className={inputClass} />
           </div>
           <div>
-            <label className="block text-sm text-gray-400 mb-1">% Grasso</label>
-            <input type="number" name="body_fat" value={formData.body_fat} onChange={handleChange} className={inputClass} />
+            <label className="block text-sm text-gray-400 mb-1">% Grasso Stimata</label>
+            <input type="number" step="0.1" name="body_fat" value={formData.body_fat} onChange={handleChange} className={inputClass} />
           </div>
         </div>
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">Livello Attività</label>
-          <select name="activity_level" value={formData.activity_level} onChange={handleChange} className={inputClass}>
-            <option value="Sedentario">Sedentario</option>
-            <option value="Leggero">Leggero</option>
-            <option value="Moderato">Moderato</option>
-            <option value="Attivo">Attivo</option>
-            <option value="Atleta">Atleta</option>
-          </select>
+
+        <div className="pt-2">
+          <h4 className="text-sm font-semibold text-gray-300 mb-3 uppercase tracking-wider">Circonferenze (cm) - Opzionali</h4>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">Petto / Torace</label>
+              <input type="number" step="0.1" name="chest_cm" value={formData.chest_cm || ''} onChange={handleChange} placeholder="Es. 100" className={inputClass} />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">Girovita (Ombelico)</label>
+              <input type="number" step="0.1" name="waist_cm" value={formData.waist_cm || ''} onChange={handleChange} placeholder="Es. 80" className={inputClass} />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">Fianchi / Glutei</label>
+              <input type="number" step="0.1" name="hips_cm" value={formData.hips_cm || ''} onChange={handleChange} placeholder="Es. 95" className={inputClass} />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-500 mb-1">Girocoscia</label>
+              <input type="number" step="0.1" name="thighs_cm" value={formData.thighs_cm || ''} onChange={handleChange} placeholder="Es. 60" className={inputClass} />
+            </div>
+          </div>
         </div>
-        <div className="pt-4 border-t border-muted">
-          <p className="text-sm text-gray-400">TDEE Calcolato (Fabbisogno Calorico)</p>
-          <p className="text-3xl font-bold text-primary">{formData.tdee} <span className="text-lg text-gray-400">kcal/giorno</span></p>
+
+        <div className="pt-2">
+          <h4 className="text-sm font-semibold text-gray-300 mb-3 uppercase tracking-wider">Stile di Vita & Allenamento</h4>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Lavoro / Dinamismo</label>
+              <select name="work_type" value={formData.work_type || 'Studente/Scrivania'} onChange={handleChange} className={inputClass}>
+                <option value="Studente/Scrivania">Sedentario (Scrivania/Studio)</option>
+                <option value="Attivo/In piedi">Dinamico (Commesso, Infermiere)</option>
+                <option value="Pesante/Cantiere">Manuale Pesante (Operaio, Muratore)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Livello NEAT Formale</label>
+              <select name="activity_level" value={formData.activity_level} onChange={handleChange} className={inputClass}>
+                <option value="Sedentario">Quasi nullo (0-3k passi)</option>
+                <option value="Leggero">Leggero (4k-6k passi)</option>
+                <option value="Moderato">Moderato (7k-10k passi)</option>
+                <option value="Attivo">Attivo (11k-15k passi)</option>
+                <option value="Atleta">Molto Attivo (+15k passi)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1">Esperienza Allenamento</label>
+              <select name="training_experience" value={formData.training_experience || 'Intermedio'} onChange={handleChange} className={inputClass}>
+                <option value="Neofita">Neofita (0-1 anni)</option>
+                <option value="Intermedio">Intermedio (1-3 anni)</option>
+                <option value="Avanzato">Avanzato (+3 anni)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm text-gray-400 mb-1 text-primary">Obiettivo PT</label>
+              <select name="goal" value={formData.goal || 'Ipertrofia'} onChange={handleChange} className="w-full bg-[--color-primary]/10 border border-[--color-primary] rounded p-2 text-white outline-none focus:border-white">
+                <option value="Dimagrimento">Definizione / Dimagrimento (Cut)</option>
+                <option value="Ricomp. Corporea">Ricomposizione Corporea</option>
+                <option value="Ipertrofia">Ipertrofia / Massa (Bulk)</option>
+                <option value="Mantenimento">Mantenimento</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div className="pt-4 border-t border-muted bg-dark rounded-xl p-4 flex items-center justify-between">
+          <div>
+            <p className="text-sm text-gray-400">TDEE Stimato (Fabbisogno Calorico Giornaliero)</p>
+            <p className="text-xs text-gray-500">Usalo per calibrare i target di macronutrienti qui sotto.</p>
+          </div>
+          <p className="text-3xl font-bold text-primary">{formData.tdee} <span className="text-lg text-gray-400 font-normal">kcal/gg</span></p>
         </div>
       </section>
 
       {/* Target Nutrizionali & Restrizioni */}
-      <section className="bg-card p-6 rounded-2xl border border-muted space-y-4">
-        <h2 className="text-xl font-semibold text-primary">Target & Dieta</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <section className="bg-card p-6 rounded-2xl border border-muted space-y-6">
+        <div className="flex items-center gap-2 border-b border-muted pb-3 mb-2">
+          <h2 className="text-xl font-semibold text-primary">Target Nutrizionali & Abitudini</h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Proteine (g / pasto)</label>
+            <label className="block text-sm text-gray-400 mb-1">Proteine Tetto Max (g/pasto)</label>
             <input type="number" name="protein_target" value={formData.protein_target} onChange={handleChange} className={inputClass} />
           </div>
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Limite Zuccheri (g totali)</label>
+            <label className="block text-sm text-gray-400 mb-1">Zuccheri Tetto Max (g/giorno)</label>
             <input type="number" name="sugar_limit" value={formData.sugar_limit} onChange={handleChange} className={inputClass} />
           </div>
           <div>
+            <label className="block text-sm text-gray-400 mb-1">Acqua Target (Litri/giorno)</label>
+            <input type="number" step="0.1" name="water_target" value={formData.water_target || 2.5} onChange={handleChange} className={inputClass} />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
             <label className="block text-sm text-gray-400 mb-1">Tipo Dieta</label>
             <select name="diet_type" value={formData.diet_type} onChange={handleChange} className={inputClass}>
-              <option value="Onnivoro">Onnivoro</option>
+              <option value="Onnivoro">Flessibile / Onnivoro</option>
               <option value="Vegetariano">Vegetariano</option>
-              <option value="Vegan">Vegan</option>
-              <option value="Keto">Keto</option>
+              <option value="Vegan">Vegano</option>
+              <option value="Keto">Cheto / Low-Carb</option>
               <option value="Paleo">Paleo</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Allergie / Intolleranze</label>
-            <input type="text" name="allergies" value={formData.allergies} onChange={handleChange} placeholder="Es. Lattosio, Glutine" className={inputClass} />
+            <label className="block text-sm text-gray-400 mb-1">Pasti Fuori Casa / Settimana</label>
+            <select name="meals_out" value={formData.meals_out || 'Mai'} onChange={handleChange} className={inputClass}>
+              <option value="Mai">Quasi Mai (Preparazione 100% meal prep)</option>
+              <option value="1-2 a settimana">1-2 a settimana (Es. Sabato/Domenica)</option>
+              <option value="Spesso">Spesso (Lavoro/Mensa/Ristorante)</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Allergie / Intolleranze / Cibi Odiati</label>
+            <input type="text" name="allergies" value={formData.allergies} onChange={handleChange} placeholder="Es. Lattosio, Glutine, Broccoli, Tonno" className={inputClass} />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Piano Integrazione in Uso</label>
+            <input type="text" name="supplements" value={formData.supplements || ''} onChange={handleChange} placeholder="Es. Whey, Creatina 5g, Omega 3, Vit. D" className={inputClass} />
           </div>
         </div>
       </section>

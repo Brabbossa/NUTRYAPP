@@ -13,14 +13,17 @@ export async function POST(req) {
       extraInstruction = `\nIMPORTANTE: L'utente ha richiesto la seguente modifica vocale al menù: "${voiceModification}". Tieni conto di questa richiesta nella generazione.\n`;
     }
 
-    const prompt = `Sei un nutrizionista AI sportivo e Chef di altissimo livello ("Synapse Professional"). 
-Genera un piano alimentare settimanale (da Lunedì a Domenica) per un utente con questi parametri:
-- Peso: ${profile.weight}kg, Altezza: ${profile.height}cm, Età: ${profile.age}
-- Fabbisogno Stimato (TDEE): ${profile.tdee} kcal/giorno
-- Target Macronutrienti: Proteine ~${profile.protein_target || 150}g per pasto.
-- Limite Zuccheri: Massimo ${profile.sugar_limit || 50}g al giorno totali.
-- Dieta: ${profile.diet_type || 'Generica'}
-- Allergie/Intolleranze: ${profile.allergies || 'Nessuna'}
+    const prompt = `Sei un nutrizionista AI sportivo e Personal Trainer di altissimo livello ("Synapse Professional"). 
+Genera un piano alimentare settimanale (da Lunedì a Domenica) per un utente con questi parametri anamnestici:
+- Dati Base: ${profile.gender}, ${profile.age} anni, Peso: ${profile.weight}kg, Altezza: ${profile.height}cm, % Grasso Stimata: ${profile.body_fat}%
+- Misure (se inserite): Petto ${profile.chest_cm}cm, Vita ${profile.waist_cm}cm, Fianchi ${profile.hips_cm}cm, Cosce ${profile.thighs_cm}cm
+- Livello Attività (NEAT): ${profile.activity_level} / Lavoro: ${profile.work_type}
+- Obiettivo Fisico PRINCIPALE: ${profile.goal}
+- Fabbisogno Calorico (TDEE): ${profile.tdee} kcal/giorno
+- Esperienza Allenamento: ${profile.training_experience}
+- Target Nutrizionali: Tetto Proteine ~${profile.protein_target || 150}g/pasto, Zuccheri Max ${profile.sugar_limit || 50}g/gg, Acqua: ${profile.water_target || 2.5}L/gg
+- Dieta: ${profile.diet_type || 'Generica'}, Allergie/Odiati: ${profile.allergies || 'Nessuna'}
+- Pasti fuori casa consentiti: ${profile.meals_out}. Piano Integrazione: ${profile.supplements || 'Nessuna'}
 ${extraInstruction}
 
 REGOLE FONDAMENTALI:
