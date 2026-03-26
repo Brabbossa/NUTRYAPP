@@ -118,18 +118,15 @@ export default function WorkoutPage() {
             <button
               key={preset.id}
               onClick={() => setSelectedPreset(selectedPreset === preset.id ? null : preset.id)}
-              className={`group relative p-4 rounded-2xl text-left transition-all duration-300 border overflow-hidden ${
+              className={`group p-5 rounded-2xl text-left transition-all duration-300 border ${
                 selectedPreset === preset.id
-                  ? 'bg-gradient-to-br from-[--color-primary]/20 to-[--color-primary]/5 text-[--color-primary] border-[--color-primary] shadow-[0_0_25px_rgba(0,255,65,0.12)] scale-[1.02]'
-                  : 'bg-[--color-card] text-gray-400 border-[--color-muted] hover:text-white hover:border-gray-600 hover:bg-[--color-card]/80'
+                  ? 'bg-[#1a1a2e] text-[--color-primary] border-[--color-primary] shadow-[0_0_20px_rgba(0,255,65,0.15)]'
+                  : 'bg-[#1a1a2e] text-gray-400 border-[#2a2a3e] hover:border-[--color-primary]/50 hover:shadow-[0_0_15px_rgba(0,255,65,0.08)] hover:text-white hover:-translate-y-0.5'
               }`}
             >
-              <div className={`absolute inset-0 bg-gradient-to-br from-[--color-primary]/10 to-transparent opacity-0 transition-opacity duration-300 ${selectedPreset === preset.id ? 'opacity-100' : 'group-hover:opacity-50'}`}></div>
-              <div className="relative z-10">
-                <span className="text-2xl block mb-2">{preset.label.split(' ')[0]}</span>
-                <span className="text-sm font-bold block leading-tight">{preset.label.split(' ').slice(1).join(' ')}</span>
-                <span className="text-[10px] opacity-50 mt-1 block uppercase tracking-wider">{preset.desc}</span>
-              </div>
+              <span className="text-3xl block mb-3">{preset.label.split(' ')[0]}</span>
+              <span className="text-sm font-bold block leading-tight">{preset.label.split(' ').slice(1).join(' ')}</span>
+              <span className="text-[10px] opacity-50 mt-1.5 block uppercase tracking-wider">{preset.desc}</span>
             </button>
           ))}
         </div>
