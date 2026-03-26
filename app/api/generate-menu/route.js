@@ -24,25 +24,28 @@ Genera un piano alimentare settimanale (da Lunedì a Domenica) per un utente con
 ${extraInstruction}
 
 REGOLE FONDAMENTALI:
-1. DEVI SCRIVERE UN ARRAY, NON UN OGGETTO, PER I PASTI DI OGNI GIORNO.
-2. OBBLIGO DEI 5 PASTI: Per OGNI SINGOLO GIORNO della settimana devi generare ESATTAMENTE 5 pasti: "Colazione", "Spuntino 1", "Pranzo", "Spuntino 2", "Cena". Totale: 35 pasti esatti. Nessuna eccezione.
-2. NESSUNA ABBREVIAZIONE: Il modello matematico fallirà se usi abbreviazioni, puntini di sospensione (...) o frasi come "stessi 5 pasti". DEVI stampare l'intero JSON array per ogni giorno di tutti i 7 giorni.
-3. ESTREMA VARIETÀ E GUSTO: Ispira le ricette a menù salutari, deliziosi e vari. Non ripetere gli stessi alimenti di continuo; alterna fonti proteiche (pollo, pesce, tofu, uova, legumi, vitello magro) e carboidrati (riso basmati, quinoa, patate dolci, pasta integrale, avena). Usa spezie ed erbe aromatiche nelle descrizioni.
+1. DEVI SCRIVERE UN ARRAY (lista []) PER I PASTI DI OGNI GIORNO, NON UN OGGETTO.
+2. OBBLIGO DEI 5 PASTI: Per OGNI GIORNO genera ESATTAMENTE 5 pasti: "Colazione", "Spuntino 1", "Pranzo", "Spuntino 2", "Cena". Totale: 35 pasti. Nessuna eccezione.
+3. NESSUNA ABBREVIAZIONE: DEVI stampare l'intero JSON per ogni giorno. Niente "...".
+4. ESTREMA VARIETÀ E GUSTO: Alterna fonti proteiche e carboidrati. Usa spezie ed erbe aromatiche.
+5. ISTRUZIONI DETTAGLIATE: Il campo "istruzioni" DEVE essere un ARRAY DI STRINGHE con step numerati e dettagliati. Ogni step deve specificare tempi di cottura, temperature, tecniche precise (es. "Scalda una padella antiaderente a fuoco medio-alto per 2 minuti"). Minimo 3 step per pasto principale, minimo 2 per spuntini.
 
-Rispondi RESTITUENDO SOLO UN OGGETTO JSON. Esempio della struttura che DEVI replicare da Lunedì a Domenica coprendo tutti e 5 i pasti ogni giorno:
+Rispondi SOLO con JSON. Struttura ESATTA da replicare per TUTTI i 7 giorni:
 {
   "menu": {
     "Lunedì": [
-      { "nome_pasto": "Colazione", "titolo": "Porridge proteico ai frutti di bosco e mandorle", "ingredienti": "Avena 50g, Proteine siero 30g, Lamponi 50g, Mandorle 10g", "istruzioni": "Cuocere l'avena, a fuoco spento amalgamare le proteine. Guarnire con lamponi e mandorle.", "pro": 35, "cho": 40, "fat": 12, "zuccheri": 5 },
-      { "nome_pasto": "Spuntino 1", "titolo": "...", "ingredienti": "...", "istruzioni": "...", "pro": 15, "cho": 20, "fat": 5, "zuccheri": 2 },
-      { "nome_pasto": "Pranzo", "titolo": "...", "ingredienti": "...", "istruzioni": "...", "pro": 30, "cho": 50, "fat": 15, "zuccheri": 3 },
-      { "nome_pasto": "Spuntino 2", "titolo": "...", "ingredienti": "...", "istruzioni": "...", "pro": 15, "cho": 20, "fat": 5, "zuccheri": 2 },
-      { "nome_pasto": "Cena", "titolo": "...", "ingredienti": "...", "istruzioni": "...", "pro": 35, "cho": 40, "fat": 15, "zuccheri": 3 }
+      { "nome_pasto": "Colazione", "titolo": "Porridge proteico ai frutti di bosco", "ingredienti": "Avena 50g, Proteine siero 30g, Lamponi 50g, Mandorle 10g", "istruzioni": ["Porta a ebollizione 200ml di acqua in un pentolino.", "Aggiungi 50g di fiocchi d'avena e cuoci a fuoco basso per 5 minuti mescolando spesso.", "Togli dal fuoco, lascia intiepidire 1 minuto e amalgama 30g di proteine in polvere.", "Versa nella ciotola, guarnisci con lamponi freschi e mandorle a lamelle."], "pro": 35, "cho": 40, "fat": 12, "zuccheri": 5 },
+      { "nome_pasto": "Spuntino 1", "titolo": "...", "ingredienti": "...", "istruzioni": ["Step 1...", "Step 2..."], "pro": 15, "cho": 20, "fat": 5, "zuccheri": 2 },
+      { "nome_pasto": "Pranzo", "titolo": "...", "ingredienti": "...", "istruzioni": ["Step 1...", "Step 2...", "Step 3...", "Step 4..."], "pro": 30, "cho": 50, "fat": 15, "zuccheri": 3 },
+      { "nome_pasto": "Spuntino 2", "titolo": "...", "ingredienti": "...", "istruzioni": ["Step 1...", "Step 2..."], "pro": 15, "cho": 20, "fat": 5, "zuccheri": 2 },
+      { "nome_pasto": "Cena", "titolo": "...", "ingredienti": "...", "istruzioni": ["Step 1...", "Step 2...", "Step 3...", "Step 4..."], "pro": 35, "cho": 40, "fat": 15, "zuccheri": 3 }
     ],
-    "Martedì": [
-      // ... devi scrivere tutti e 5 i pasti completi per Martedì ...
-    ]
-    // ... prosegui Scrivendo tutto fino alla Domenica compresa ...
+    "Martedì": [ ... tutti e 5 i pasti completi ... ],
+    "Mercoledì": [ ... ],
+    "Giovedì": [ ... ],
+    "Venerdì": [ ... ],
+    "Sabato": [ ... ],
+    "Domenica": [ ... ]
   }
 }`;
 
@@ -50,7 +53,7 @@ Rispondi RESTITUENDO SOLO UN OGGETTO JSON. Esempio della struttura che DEVI repl
       messages: [{ role: "user", content: prompt }],
       model: "llama-3.3-70b-versatile",
       response_format: { type: "json_object" },
-      max_tokens: 8000
+      max_tokens: 16000
     });
     
     const resultText = completion.choices[0].message.content;

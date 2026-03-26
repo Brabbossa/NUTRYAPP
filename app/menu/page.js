@@ -159,7 +159,18 @@ export default function MenuPage() {
                     <h3 className="text-lg font-bold text-[--color-primary]">{meal.titolo || 'Pasto Generico'}</h3>
                   </div>
                   <p className="text-sm text-gray-400"><strong className="text-white">Ingredienti:</strong> {meal.ingredienti}</p>
-                  <p className="text-sm text-gray-400"><strong className="text-white">Istruzioni:</strong> {meal.istruzioni}</p>
+                  <div className="mt-2">
+                    <strong className="text-white text-sm">Preparazione:</strong>
+                    {Array.isArray(meal.istruzioni) ? (
+                      <ol className="list-decimal list-inside mt-1 space-y-1">
+                        {meal.istruzioni.map((step, si) => (
+                          <li key={si} className="text-sm text-gray-400 leading-relaxed">{step}</li>
+                        ))}
+                      </ol>
+                    ) : (
+                      <p className="text-sm text-gray-400 mt-1">{meal.istruzioni}</p>
+                    )}
+                  </div>
                 </div>
                 <div className="md:w-48 flex flex-col gap-2 shrink-0 justify-center">
                   <div className="grid grid-cols-2 gap-2 text-xs font-mono text-center">
