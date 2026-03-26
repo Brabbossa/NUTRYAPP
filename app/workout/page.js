@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import { useUser } from '../context/UserContext'
-import { Loader2, Dumbbell, Save, CheckCircle2, Package, Mic } from 'lucide-react'
+import { Loader2, Dumbbell, Save, CheckCircle2, Package, Mic, Timer } from 'lucide-react'
 import { VoiceCommand } from '../components/VoiceCommand'
+import { WorkoutTimer } from '../components/WorkoutTimer'
 
 const WORKOUT_PRESETS = [
   { id: 'push', label: '🏋️ Push Day', target: 'Petto, Spalle e Tricipiti (Push Day)', desc: 'Petto, Spalle, Tricipiti' },
@@ -23,6 +24,7 @@ export default function WorkoutPage() {
   const [currentPlan, setCurrentPlan] = useState(null)
   const [rpe, setRpe] = useState('')
   const [isSaved, setIsSaved] = useState(false)
+  const [timerActive, setTimerActive] = useState(false)
 
   const handleGenerate = async (voiceMod = '') => {
     const preset = WORKOUT_PRESETS.find(p => p.id === selectedPreset)
@@ -130,9 +132,25 @@ export default function WorkoutPage() {
       {/* Workout Display */}
       {currentPlan && !loading && (
         <div className="bg-[--color-card] border border-[--color-primary]/50 shadow-[0_0_30px_rgba(0,255,65,0.05)] rounded-2xl overflow-hidden">
-          <div className="bg-[--color-primary]/10 border-b border-[--color-primary]/20 p-6">
+          <div className="bg-[--color-primary]/10 border-b border-[--color-primary]/20 p-6 flex items-center justify-between">
             <h2 className="text-2xl font-bold text-[--color-primary]">{currentPlan.titolo}</h2>
+            {!timerActive && (
+              <button
+                onClick={() => setTimerActive(true)}
+                className="flex items-center gap-2 bg-[--color-primary] text-[--color-dark] font-bold px-5 py-2.5 rounded-xl hover:shadow-[0_0_20px_rgba(0,255,65,0.3)] transition-all active:scale-95"
+              >
+                <Timer size={18} /> INIZIA
+              </button>
+            )}
           </div>
+
+          {/* Workout Timer */}
+          {timerActive && (
+            <WorkoutTimer
+              plan={currentPlan}
+              onComplete={() => setTimerActive(false)}
+            />
+          )}
           
           <div className="p-6 space-y-4">
             {currentPlan.esercizi?.map((ex, i) => (
