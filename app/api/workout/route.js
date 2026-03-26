@@ -18,7 +18,7 @@ export async function POST(req) {
     }
 
     const prompt = `Sei un Personal Trainer AI ("Synapse Professional").
-L'utente (${profile.activityLevel}, Età: ${profile.age}) vuole allenare: ${targetMuscle}.
+L'utente (${profile.activity_level || 'Attivo'}, Età: ${profile.age || 25}) vuole allenare: ${targetMuscle}.
 ${extraInstruction}
 Storico ultimi allenamenti e RPE: ${historyText}
 

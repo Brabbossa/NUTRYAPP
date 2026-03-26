@@ -153,7 +153,7 @@ export default function WorkoutPage() {
           )}
           
           <div className="p-6 space-y-4">
-            {currentPlan.esercizi?.map((ex, i) => (
+            {(Array.isArray(currentPlan.esercizi) ? currentPlan.esercizi : []).map((ex, i) => (
               <div key={i} className="bg-[--color-dark] border border-[--color-muted] p-4 rounded-xl hover:border-[--color-primary] transition">
                 <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
                   <h3 className="text-lg font-bold text-white">{i + 1}. {ex.nome}</h3>
