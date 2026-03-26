@@ -14,6 +14,7 @@ export function Sidebar() {
     { href: '/', label: 'Dashboard', icon: Home },
     { href: '/menu', label: 'Menù Settimanale', icon: Utensils },
     { href: '/workout', label: 'Workout Periodizzato', icon: Dumbbell },
+    { href: '/report', label: 'Synapse Clinic Report', icon: Settings },
   ]
 
   const toggle = () => setIsOpen(!isOpen)

@@ -1,6 +1,9 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect } from 'react';
+import { supabase } from '../lib/supabaseClient';
+import { Auth } from '../components/Auth';
+import { Loader2 } from 'lucide-react';
 
 const UserContext = createContext();
 
@@ -8,78 +11,139 @@ const defaultProfile = {
   weight: 75,
   height: 180,
   age: 25,
-  bodyFat: 15,
-  activityLevel: 'Active',
+  body_fat: 15,
+  activity_level: 'Attivo',
   tdee: 2500,
-  proteinTarget: 150,
-  sugarLimit: 50,
-  dietType: 'Onnivoro',
+  protein_target: 150,
+  sugar_limit: 50,
+  diet_type: 'Onnivoro',
   allergies: '',
-  mealTimes: {
+  meal_times: {
     breakfast: '08:00',
     snack1: '10:30',
     lunch: '13:00',
     snack2: '16:30',
     dinner: '20:00'
   },
-  workoutTime: '18:00'
+  workout_time: '18:00'
 };
 
 export function UserProvider({ children }) {
+  const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(defaultProfile);
   const [weeklyMenu, setWeeklyMenu] = useState(null);
   const [workoutHistory, setWorkoutHistory] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load from LocalStorage on mount
   useEffect(() => {
-    try {
-      const savedProfile = localStorage.getItem('synapse_profile');
-      if (savedProfile) setProfile(JSON.parse(savedProfile));
+    // Check active session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        fetchProfile(session.user.id);
+      } else {
+        setIsLoaded(true);
+      }
+    });
 
-      const savedMenu = localStorage.getItem('synapse_menu');
-      if (savedMenu) setWeeklyMenu(JSON.parse(savedMenu));
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        fetchProfile(session.user.id);
+      } else {
+        setProfile(defaultProfile);
+      }
+    });
 
-      const savedWorkouts = localStorage.getItem('synapse_workouts');
-      if (savedWorkouts) setWorkoutHistory(JSON.parse(savedWorkouts));
-    } catch (e) {
-      console.error("Error loading state", e);
-    } finally {
-      setIsLoaded(true);
-    }
+    return () => subscription.unsubscribe();
   }, []);
 
-  // Sync to LocalStorage
+  // Sync menu to localstorage so it persists per device
   useEffect(() => {
     if (isLoaded) {
-      localStorage.setItem('synapse_profile', JSON.stringify(profile));
-    }
-  }, [profile, isLoaded]);
-
-  useEffect(() => {
-    if (isLoaded && weeklyMenu) {
-      localStorage.setItem('synapse_menu', JSON.stringify(weeklyMenu));
+      if (weeklyMenu) {
+        localStorage.setItem('synapse_menu', JSON.stringify(weeklyMenu));
+      } else {
+        const savedMenu = localStorage.getItem('synapse_menu');
+        if (savedMenu) setWeeklyMenu(JSON.parse(savedMenu));
+      }
     }
   }, [weeklyMenu, isLoaded]);
 
-  useEffect(() => {
-    if (isLoaded) {
-      localStorage.setItem('synapse_workouts', JSON.stringify(workoutHistory));
+  const fetchProfile = async (userId) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+      
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error fetching profile:', error);
+      }
+      
+      if (data) {
+        // Formatta campi snake_case a camelCase dove serve o mantienili
+        setProfile({ ...defaultProfile, ...data });
+      } else {
+        // Inserisci default se non c'è
+        const { data: newProfile, error: insertError } = await supabase
+          .from('profiles')
+          .insert([{ id: userId, ...defaultProfile }])
+          .select()
+          .single();
+          
+        if (newProfile) setProfile(newProfile);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoaded(true);
     }
-  }, [workoutHistory, isLoaded]);
+  };
 
-  const saveWorkout = (workout) => {
+  const updateProfile = async (newProfile) => {
+    const updated = { ...profile, ...newProfile };
+    setProfile(updated);
+    if (user) {
+      await supabase
+        .from('profiles')
+        .update(newProfile)
+        .eq('id', user.id);
+    }
+  };
+
+  const saveWorkout = async (workout) => {
+    if (!user) return;
+    
+    // Save to state for instant UI update
     setWorkoutHistory(prev => [...prev, workout]);
+
+    // Save to Supabase
+    await supabase.from('workout_history').insert([{
+      user_id: user.id,
+      date: new Date().toISOString(),
+      target: workout.target,
+      plan: workout.plan,
+      rpe: workout.rpe
+    }]);
   };
 
-  const updateProfile = (newProfile) => {
-    setProfile(prev => ({ ...prev, ...newProfile }));
-  };
+  if (!isLoaded) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-dark">
+        <Loader2 className="animate-spin text-primary" size={48} />
+      </div>
+    );
+  }
 
-  if (!isLoaded) return null; // Avoid hydration mismatch
+  if (!user) {
+    return <Auth />;
+  }
 
   return (
-    <UserContext.Provider value={{ profile, updateProfile, weeklyMenu, setWeeklyMenu, workoutHistory, saveWorkout }}>
+    <UserContext.Provider value={{ user, profile, updateProfile, weeklyMenu, setWeeklyMenu, workoutHistory, setWorkoutHistory, saveWorkout }}>
       {children}
     </UserContext.Provider>
   );

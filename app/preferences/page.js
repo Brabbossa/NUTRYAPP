@@ -27,7 +27,7 @@ export default function PreferencesPage() {
   }
 
   const calculateTDEE = (data) => {
-    const { weight, height, age, activityLevel } = data
+    const { weight, height, age, activity_level } = data
     // Base BMR (Mifflin-St Jeor Unisex approximation)
     let bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5
     
@@ -38,7 +38,7 @@ export default function PreferencesPage() {
       'Attivo': 1.725,
       'Atleta': 1.9
     }
-    const multiplier = multipliers[activityLevel] || 1.55
+    const multiplier = multipliers[activity_level] || 1.55
     return Math.round(bmr * multiplier)
   }
 
@@ -98,12 +98,12 @@ export default function PreferencesPage() {
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1">% Grasso</label>
-            <input type="number" name="bodyFat" value={formData.bodyFat} onChange={handleChange} className="w-full bg-dark border border-muted rounded p-2 text-white outline-none focus:border-primary" />
+            <input type="number" name="body_fat" value={formData.body_fat} onChange={handleChange} className="w-full bg-dark border border-muted rounded p-2 text-white outline-none focus:border-primary" />
           </div>
         </div>
         <div>
           <label className="block text-sm text-gray-400 mb-1">Livello Attività</label>
-          <select name="activityLevel" value={formData.activityLevel} onChange={handleChange} className="w-full bg-dark border border-muted rounded p-2 text-white outline-none focus:border-primary">
+          <select name="activity_level" value={formData.activity_level} onChange={handleChange} className="w-full bg-dark border border-muted rounded p-2 text-white outline-none focus:border-primary">
             <option value="Sedentario">Sedentario</option>
             <option value="Leggero">Leggero</option>
             <option value="Moderato">Moderato</option>
@@ -123,15 +123,15 @@ export default function PreferencesPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm text-gray-400 mb-1">Proteine (g / pasto)</label>
-            <input type="number" name="proteinTarget" value={formData.proteinTarget} onChange={handleChange} className="w-full bg-dark border border-muted rounded p-2 text-white outline-none focus:border-primary" />
+            <input type="number" name="protein_target" value={formData.protein_target} onChange={handleChange} className="w-full bg-dark border border-muted rounded p-2 text-white outline-none focus:border-primary" />
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1">Limite Zuccheri (g totali)</label>
-            <input type="number" name="sugarLimit" value={formData.sugarLimit} onChange={handleChange} className="w-full bg-dark border border-muted rounded p-2 text-white outline-none focus:border-primary" />
+            <input type="number" name="sugar_limit" value={formData.sugar_limit} onChange={handleChange} className="w-full bg-dark border border-muted rounded p-2 text-white outline-none focus:border-primary" />
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1">Tipo Dieta</label>
-            <select name="dietType" value={formData.dietType} onChange={handleChange} className="w-full bg-dark border border-muted rounded p-2 text-white outline-none focus:border-primary">
+            <select name="diet_type" value={formData.diet_type} onChange={handleChange} className="w-full bg-dark border border-muted rounded p-2 text-white outline-none focus:border-primary">
               <option value="Onnivoro">Onnivoro</option>
               <option value="Vegetariano">Vegetariano</option>
               <option value="Vegan">Vegan</option>
@@ -152,27 +152,27 @@ export default function PreferencesPage() {
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm text-gray-400 mb-1">Colazione</label>
-            <input type="time" name="mealTimes.breakfast" value={formData.mealTimes?.breakfast || '08:00'} onChange={handleChange} className="w-full bg-dark border border-muted rounded p-2 text-white outline-none focus:border-primary" />
+            <input type="time" name="meal_times.breakfast" value={formData.meal_times?.breakfast || '08:00'} onChange={handleChange} className="w-full bg-dark border border-muted rounded p-2 text-white outline-none focus:border-primary" />
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1">Spuntino 1</label>
-            <input type="time" name="mealTimes.snack1" value={formData.mealTimes?.snack1 || '10:30'} onChange={handleChange} className="w-full bg-dark border border-muted rounded p-2 text-white outline-none focus:border-primary" />
+            <input type="time" name="meal_times.snack1" value={formData.meal_times?.snack1 || '10:30'} onChange={handleChange} className="w-full bg-dark border border-muted rounded p-2 text-white outline-none focus:border-primary" />
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1">Pranzo</label>
-            <input type="time" name="mealTimes.lunch" value={formData.mealTimes?.lunch || '13:00'} onChange={handleChange} className="w-full bg-dark border border-muted rounded p-2 text-white outline-none focus:border-primary" />
+            <input type="time" name="meal_times.lunch" value={formData.meal_times?.lunch || '13:00'} onChange={handleChange} className="w-full bg-dark border border-muted rounded p-2 text-white outline-none focus:border-primary" />
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1">Spuntino 2</label>
-            <input type="time" name="mealTimes.snack2" value={formData.mealTimes?.snack2 || '16:30'} onChange={handleChange} className="w-full bg-dark border border-muted rounded p-2 text-white outline-none focus:border-primary" />
+            <input type="time" name="meal_times.snack2" value={formData.meal_times?.snack2 || '16:30'} onChange={handleChange} className="w-full bg-dark border border-muted rounded p-2 text-white outline-none focus:border-primary" />
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1">Cena</label>
-            <input type="time" name="mealTimes.dinner" value={formData.mealTimes?.dinner || '20:00'} onChange={handleChange} className="w-full bg-dark border border-muted rounded p-2 text-white outline-none focus:border-primary" />
+            <input type="time" name="meal_times.dinner" value={formData.meal_times?.dinner || '20:00'} onChange={handleChange} className="w-full bg-dark border border-muted rounded p-2 text-white outline-none focus:border-primary" />
           </div>
           <div>
             <label className="block text-sm text-gray-400 mb-1 text-primary">Workout</label>
-            <input type="time" name="workoutTime" value={formData.workoutTime || '18:00'} onChange={handleChange} className="w-full bg-dark border border-muted rounded p-2 text-white outline-none focus:border-primary" />
+            <input type="time" name="workout_time" value={formData.workout_time || '18:00'} onChange={handleChange} className="w-full bg-dark border border-muted rounded p-2 text-white outline-none focus:border-primary" />
           </div>
         </div>
       </section>

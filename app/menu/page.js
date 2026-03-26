@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useUser } from '../context/UserContext'
 import { Loader2, RefreshCw, Mic, Package } from 'lucide-react'
 import { VoiceCommand } from '../components/VoiceCommand'
+import { supabase } from '../lib/supabaseClient'
 
 const MEAL_PRESETS = [
   { id: 'bulk', label: '💪 Massa / Bulk', desc: 'Alto proteico, surplus calorico', mod: 'Genera un menù ipercalorico per massa muscolare con alto apporto proteico e carboidrati complessi.' },
@@ -20,6 +21,26 @@ export default function MenuPage() {
   const [selectedDay, setSelectedDay] = useState('Lunedì')
   const [selectedPreset, setSelectedPreset] = useState(null)
   const [voiceMod, setVoiceMod] = useState('')
+  const [completedMeals, setCompletedMeals] = useState([])
+  const { user } = useUser()
+
+  useEffect(() => {
+    // Fetch today's completed meals
+    const fetchCompletedMeals = async () => {
+      if (!user) return
+      const today = new Date().toISOString().split('T')[0]
+      const { data } = await supabase
+        .from('meals_history')
+        .select('recipe_title')
+        .eq('user_id', user.id)
+        .eq('date', today)
+      
+      if (data) {
+        setCompletedMeals(data.map(m => m.recipe_title))
+      }
+    }
+    fetchCompletedMeals()
+  }, [user])
 
   const daysStr = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica']
   const days = weeklyMenu?.menu ? Object.keys(weeklyMenu.menu) : daysStr
@@ -148,6 +169,32 @@ export default function MenuPage() {
                     <div className="bg-[--color-dark] border border-[--color-muted] p-2 rounded-lg"><span className="block text-gray-500 mb-1">FAT</span><span className="text-white font-bold text-sm">{meal.fat}g</span></div>
                     <div className="bg-[--color-dark] border border-[--color-muted] p-2 rounded-lg"><span className="block text-gray-500 mb-1">ZUC</span><span className="text-red-400 font-bold text-sm">{meal.zuccheri}g</span></div>
                   </div>
+                  
+                  {completedMeals.includes(meal.titolo) ? (
+                    <div className="mt-2 text-center bg-green-500/20 text-green-400 py-2 rounded-lg text-sm font-bold border border-green-500/50">
+                      ✔️ Mangiato Oggi
+                    </div>
+                  ) : (
+                    <button 
+                      onClick={async () => {
+                        const today = new Date().toISOString().split('T')[0]
+                        const { error } = await supabase.from('meals_history').insert([{
+                          user_id: user.id,
+                          date: today,
+                          meal_name: meal.nome_pasto,
+                          recipe_title: meal.titolo,
+                          macros: { pro: meal.pro, cho: meal.cho, fat: meal.fat, zuccheri: meal.zuccheri },
+                          is_completed: true
+                        }])
+                        if (!error) {
+                          setCompletedMeals(prev => [...prev, meal.titolo])
+                        }
+                      }}
+                      className="mt-2 text-center bg-dark hover:bg-[--color-primary]/20 text-gray-300 hover:text-[--color-primary] py-2 rounded-lg text-sm font-bold border border-[--color-muted] hover:border-[--color-primary] transition-all"
+                    >
+                      Segna Mangiato
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
