@@ -146,12 +146,14 @@ export default function WorkoutPage() {
             </h3>
             <p className="text-[11px] text-gray-500 mt-2 ml-10">"Concentrati sui bicipiti" · "Aggiungi superset" · "Evita panca piana"</p>
           </div>
-          <div className="flex items-center gap-3">
-            <VoiceCommand onResult={handleVoice} />
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto mt-4 md:mt-0">
+            <div className="w-full sm:w-auto">
+              <VoiceCommand onResult={handleVoice} />
+            </div>
             <button 
               onClick={() => handleGenerate()}
               disabled={loading || !selectedPreset}
-              className="group flex items-center gap-2 bg-gradient-to-r from-[--color-primary] to-emerald-400 text-[--color-dark] font-extrabold px-7 py-3.5 rounded-xl hover:shadow-[0_0_30px_rgba(0,255,65,0.3)] transition-all duration-300 disabled:opacity-40 disabled:shadow-none active:scale-95"
+              className="w-full sm:w-auto group flex items-center justify-center gap-2 bg-gradient-to-r from-[--color-primary] to-emerald-400 text-[--color-dark] font-extrabold px-7 py-3.5 rounded-xl hover:shadow-[0_0_30px_rgba(0,255,65,0.3)] transition-all duration-300 disabled:opacity-40 disabled:shadow-none active:scale-95"
             >
               {loading ? <Loader2 className="animate-spin" size={20} /> : <span className="text-lg">⚡</span>}
               <span>GENERA</span>

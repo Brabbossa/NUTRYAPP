@@ -8,9 +8,9 @@ export async function POST(req) {
   try {
     const { profile, voiceModification } = await req.json();
     
-    let extraInstruction = '';
+    let extraInstruction = `\nREGOLA SULLE ALLERGIE E PREFERENZE: L'utente ha indicato "${profile.allergies || 'Nessuna'}" come cibi da evitare/allergie. NON DEVI MAI includere ingredienti che violano questa regola.\n`;
     if (voiceModification) {
-      extraInstruction = `\nIMPORTANTE: L'utente ha richiesto la seguente modifica vocale al menù: "${voiceModification}". Tieni conto di questa richiesta nella generazione.\n`;
+      extraInstruction += `\nREGOLA CRITICA DEFINITIVA (MODIFICA UTENTE): L'utente ha espresso questa precisa volontà per il menù: "${voiceModification}". DEVI rispettare questa richiesta AL 100%. Se chiede di evitare carne, usa solo alternative. Se chiede cibi specifici, usa solo quelli. ADATTATI COMPLETAMENTE ALLA RICHIESTA.\n`;
     }
 
     const prompt = `Sei un nutrizionista AI sportivo e Personal Trainer di altissimo livello ("Synapse Professional"). 

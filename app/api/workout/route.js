@@ -14,7 +14,7 @@ export async function POST(req) {
 
     let extraInstruction = '';
     if (voiceModification) {
-      extraInstruction = `\nIMPORTANTE: L'utente ha fatto questa richiesta vocale: "${voiceModification}". Adatta l'allenamento di conseguenza.\n`;
+      extraInstruction = `\nREGOLA CRITICA DEFINITIVA (MODIFICA UTENTE): L'utente ha fatto questa precisissima richiesta: "${voiceModification}". DEVI ADATTARTI AL 100% A QUESTA RICHIESTA. Se chiede di evitare un esercizio, eliminalo. Se chiede una tecnica specifica, usala.\n`;
     }
 
     const prompt = `Ruolo: Agisci come un Personal Trainer esperto in programmazione dell'allenamento e analisi dei dati ("Synapse Professional"). Il tuo obiettivo è generare schede di allenamento "ad hoc" che siano sicure, efficaci e strettamente personalizzate.

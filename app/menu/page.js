@@ -89,17 +89,17 @@ export default function MenuPage() {
             </h1>
             <p className="text-gray-500 mt-2 text-sm">35 pasti calibrati dall'AI sul tuo profilo. Genera, mangia, domina.</p>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-3 text-xs font-mono">
-              <div className="bg-[--color-dark] border border-[--color-muted] px-3 py-2 rounded-lg text-center">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto mt-4 md:mt-0">
+            <div className="flex justify-between sm:justify-start items-center gap-2 text-xs font-mono w-full sm:w-auto">
+              <div className="bg-[--color-dark] border border-[--color-muted] px-3 py-2 rounded-lg text-center flex-1 sm:flex-none">
                 <span className="block text-gray-500 mb-0.5">TDEE</span>
                 <span className="text-[--color-primary] font-bold">{profile.tdee} kcal</span>
               </div>
-              <div className="bg-[--color-dark] border border-[--color-muted] px-3 py-2 rounded-lg text-center">
-                <span className="block text-gray-500 mb-0.5">PROTEINE</span>
+              <div className="bg-[--color-dark] border border-[--color-muted] px-3 py-2 rounded-lg text-center flex-1 sm:flex-none">
+                <span className="block text-gray-500 mb-0.5">PRO</span>
                 <span className="text-white font-bold">{profile.protein_target || 150}g</span>
               </div>
-              <div className="bg-[--color-dark] border border-[--color-muted] px-3 py-2 rounded-lg text-center">
+              <div className="bg-[--color-dark] border border-[--color-muted] px-3 py-2 rounded-lg text-center flex-1 sm:flex-none">
                 <span className="block text-gray-500 mb-0.5">DIETA</span>
                 <span className="text-white font-bold">{profile.diet_type || 'Onnivoro'}</span>
               </div>
@@ -107,7 +107,7 @@ export default function MenuPage() {
             <button 
               onClick={() => handleGenerate()}
               disabled={loading}
-              className="group flex items-center gap-2 bg-gradient-to-r from-[--color-primary] to-emerald-400 text-[--color-dark] font-extrabold px-6 py-3.5 rounded-xl hover:shadow-[0_0_30px_rgba(0,255,65,0.3)] transition-all duration-300 disabled:opacity-40 active:scale-95"
+              className="w-full sm:w-auto group flex items-center justify-center gap-2 bg-gradient-to-r from-[--color-primary] to-emerald-400 text-[--color-dark] font-extrabold px-6 py-3.5 rounded-xl hover:shadow-[0_0_30px_rgba(0,255,65,0.3)] transition-all duration-300 disabled:opacity-40 active:scale-95"
             >
               {loading ? <Loader2 className="animate-spin" size={18} /> : <RefreshCw size={18} />}
               <span>{weeklyMenu ? 'Rigenera' : 'Genera IA'}</span>
