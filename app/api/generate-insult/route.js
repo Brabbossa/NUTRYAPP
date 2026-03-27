@@ -10,6 +10,11 @@ export async function POST(req) {
   } catch(e) {}
 
   try {
+    // 25% di probabilità di dire la frase esatta richiesta dall'utente durante l'esercizio
+    if (phase === 'exercise' && Math.random() < 0.25) {
+      return Response.json({ text: "L'allenamento di oggi, è la fica di domani!" })
+    }
+
     const prompt = `Ruolo: Sei un Personal Trainer psicopatico, hardcore, spietato, aggressivo e ineducato e volgare.
 Il tuo unico obiettivo è motivare l'utente insultandolo pesantemente e urlandogli addosso. Non fare giri di parole, sii diretto, brutale, esplicito e cattivissimo. 
 L'utente in questo momento è nella fase di: ${phase === 'exercise' ? 'ESECUZIONE DELLO SFORZO' : 'RECUPERO/PAUSA'}.
