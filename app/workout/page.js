@@ -86,7 +86,7 @@ export default function WorkoutPage() {
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-4xl font-extrabold tracking-tight">
-              <span className="bg-gradient-to-r from-[--color-primary] via-emerald-400 to-teal-300 bg-clip-text text-transparent">Workout</span>
+              <span className="bg-gradient-to-r from-[--color-primary] via-cyan-400 to-blue-500 bg-clip-text text-transparent">Workout</span>
               <span className="text-white ml-2">Periodizzato</span>
             </h1>
             <p className="text-gray-500 mt-2 text-sm">Scegli il tuo split, genera con l'AI, e spacca tutto.</p>
@@ -153,7 +153,7 @@ export default function WorkoutPage() {
             <button 
               onClick={() => handleGenerate()}
               disabled={loading || !selectedPreset}
-              className="w-full sm:w-auto group flex items-center justify-center gap-2 bg-gradient-to-r from-[--color-primary] to-emerald-400 text-[--color-dark] font-extrabold px-7 py-3.5 rounded-xl hover:shadow-[0_0_30px_rgba(0,255,65,0.3)] transition-all duration-300 disabled:opacity-40 disabled:shadow-none active:scale-95"
+              className="w-full sm:w-auto group flex items-center justify-center gap-2 bg-gradient-to-r from-[--color-primary] to-cyan-500 text-black font-extrabold px-7 py-3.5 rounded-[16px] hover:shadow-[0_0_30px_rgba(0,229,255,0.3)] transition-all duration-300 disabled:opacity-40 disabled:shadow-none active:scale-95"
             >
               {loading ? <Loader2 className="animate-spin" size={20} /> : <span className="text-lg">⚡</span>}
               <span>GENERA</span>
@@ -166,7 +166,7 @@ export default function WorkoutPage() {
 
       {/* Workout Display */}
       {currentPlan && !loading && (
-        <div className="bg-white/5 shadow-xl rounded-2xl overflow-hidden mt-8">
+        <div className="bg-white/[0.03] backdrop-blur-2xl border border-white/[0.05] shadow-[0_8px_32px_rgba(0,0,0,0.3)] rounded-[24px] overflow-hidden mt-8">
           <div className="bg-[--color-primary]/10 border-b border-[--color-primary]/20 p-6 flex items-center justify-between">
             <h2 className="text-2xl font-bold text-[--color-primary]">{currentPlan.titolo}</h2>
             {!timerActive && (
@@ -234,9 +234,9 @@ export default function WorkoutPage() {
                 </div>
                 <div className="flex gap-3 w-full md:w-auto">
                   <input type="number" min="1" max="10" placeholder="RPE" value={rpe} onChange={e => setRpe(e.target.value)}
-                    className="w-24 bg-white/10 rounded-xl p-3 text-center text-xl font-black text-white outline-none focus:bg-white/20 transition-colors" />
+                    className="w-24 bg-white/5 border border-white/10 rounded-[14px] p-3 text-center text-xl font-black text-white outline-none focus:bg-white/10 transition-colors" />
                   <button onClick={handleSaveRPE} disabled={!rpe}
-                    className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-gradient-to-r from-[--color-primary] to-emerald-400 text-black font-black px-8 py-3 rounded-xl disabled:opacity-50 hover:shadow-[0_0_20px_rgba(0,255,65,0.3)] transition-all">
+                    className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-gradient-to-r from-[--color-primary] to-cyan-500 text-black font-black px-8 py-3 rounded-[14px] disabled:opacity-50 hover:shadow-[0_0_20px_rgba(0,229,255,0.3)] transition-all">
                     <Save size={18} /> SALVA
                   </button>
                 </div>
@@ -248,7 +248,7 @@ export default function WorkoutPage() {
             )}
             
             {!isSaved && (
-              <div className="mt-6 p-5 bg-white/5 rounded-xl">
+              <div className="mt-8 p-6 bg-white/[0.02] border border-white/[0.05] rounded-[24px]">
                 <h5 className="text-xs font-bold text-[--color-primary] uppercase tracking-widest mb-2">Guida all'RPE (Sforzo Percepito)</h5>
                 <p className="text-[11px] text-gray-500 leading-relaxed">
                   L'<strong>RPE (Rate of Perceived Exertion)</strong> è una scala da 1 a 10 che misura quanto è stato duro l'allenamento:
@@ -273,7 +273,7 @@ export default function WorkoutPage() {
           <h3 className="text-lg font-bold text-gray-400 mb-4">Ultimi Allenamenti</h3>
           <div className="space-y-3">
             {workoutHistory.slice(-5).reverse().map((w, i) => (
-              <div key={i} className="bg-white/5 p-5 rounded-xl flex items-center justify-between hover:bg-white/10 transition-colors">
+              <div key={i} className="bg-white/[0.03] border border-white/[0.05] p-6 rounded-[20px] flex items-center justify-between hover:bg-white/[0.06] transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.15)]">
                 <span className="font-bold text-white">{w.target}</span>
                 <div className="flex items-center gap-4">
                   <span className="text-sm text-gray-400">{new Date(w.date).toLocaleDateString()}</span>

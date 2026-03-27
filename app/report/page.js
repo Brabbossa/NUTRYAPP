@@ -74,7 +74,7 @@ export default function ReportPage() {
         <div className="relative z-10">
           <h1 className="text-4xl font-extrabold tracking-tight flex items-center gap-3">
             <Brain className="text-[--color-primary]" size={36}/>
-            <span className="bg-gradient-to-r from-[--color-primary] via-emerald-400 to-teal-300 bg-clip-text text-transparent">Synapse</span>
+            <span className="bg-gradient-to-r from-[--color-primary] via-cyan-400 to-blue-500 bg-clip-text text-transparent">Synapse</span>
             <span className="text-white">Clinic</span>
           </h1>
           <p className="text-gray-500 mt-2 text-sm">Genera la tua valutazione clinica settimanale basata sui dati tracciati negli ultimi 7 giorni.</p>
@@ -82,24 +82,24 @@ export default function ReportPage() {
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <div className="bg-white/5 p-6 rounded-2xl flex flex-col items-center justify-center text-center shadow-lg">
+        <div className="bg-white/[0.03] backdrop-blur-2xl border border-white/[0.05] p-6 rounded-[24px] flex flex-col items-center justify-center text-center shadow-[0_4px_24px_rgba(0,0,0,0.2)]">
           <span className="text-4xl font-black text-white">{stats.meals}</span>
           <span className="text-sm text-gray-400 font-bold uppercase tracking-wider mt-1">Pasti Completati</span>
         </div>
-        <div className="bg-white/5 p-6 rounded-2xl flex flex-col items-center justify-center text-center shadow-lg">
+        <div className="bg-white/[0.03] backdrop-blur-2xl border border-white/[0.05] p-6 rounded-[24px] flex flex-col items-center justify-center text-center shadow-[0_4px_24px_rgba(0,0,0,0.2)]">
           <span className="text-4xl font-black text-white group-hover:text-[--color-primary] transition-colors">{stats.workouts}</span>
           <span className="text-sm text-gray-400 font-bold uppercase tracking-wider mt-1">Workout Fatti</span>
         </div>
       </div>
 
       {!reportHtml && !loading && (
-        <button onClick={generateReport} className="w-full bg-gradient-to-r from-[--color-primary] to-emerald-400 text-[--color-dark] font-black text-xl py-6 rounded-2xl hover:shadow-[0_0_30px_rgba(0,255,65,0.3)] transition-all duration-300 active:scale-95">
+        <button onClick={generateReport} className="w-full bg-gradient-to-r from-[--color-primary] to-cyan-500 text-black font-black text-xl py-6 rounded-[24px] hover:shadow-[0_0_30px_rgba(0,229,255,0.3)] transition-all duration-300 active:scale-95 textShadow-sm">
           ANALIZZA LA MIA SETTIMANA
         </button>
       )}
 
       {loading && (
-        <div className="flex flex-col items-center justify-center p-12 bg-white/5 rounded-2xl shadow-xl">
+        <div className="flex flex-col items-center justify-center p-12 bg-white/[0.03] backdrop-blur-2xl border border-white/[0.05] rounded-[24px] shadow-[0_4px_24px_rgba(0,0,0,0.2)]">
           <Activity className="text-[--color-primary] animate-pulse mb-4" size={48} />
           <h3 className="text-lg font-black text-white mb-2">Calcolo Diagnosi in Corso...</h3>
           <p className="text-sm text-gray-400 text-center max-w-sm">Synapse sta analizzando ogni grammo di macro e l'RPE dei tuoi ultimi 7 giorni per formulare una diagnosi brutale ma necessaria.</p>
@@ -109,10 +109,10 @@ export default function ReportPage() {
       {error && <div className="p-4 bg-red-500/20 text-red-500 border border-red-500/30 rounded-xl font-semibold">{error}</div>}
 
       {reportHtml && !loading && (
-         <div className="bg-white/5 p-8 rounded-2xl relative shadow-[0_0_50px_rgba(0,255,65,0.05)] text-gray-300 synapse-report">
+         <div className="bg-white/[0.03] backdrop-blur-2xl border border-white/[0.05] p-8 rounded-[24px] relative shadow-[0_4px_24px_rgba(0,0,0,0.2)] text-gray-300 synapse-report">
             <div dangerouslySetInnerHTML={{ __html: reportHtml }} />
             
-            <button onClick={generateReport} className="mt-12 flex items-center justify-center gap-2 px-8 py-3.5 bg-gradient-to-r from-[--color-primary] to-emerald-400 text-black rounded-xl text-lg font-black shadow-[0_0_20px_rgba(0,255,65,0.15)] hover:shadow-[0_0_30px_rgba(0,255,65,0.3)] hover:scale-[1.02] transition-all">
+            <button onClick={generateReport} className="mt-12 flex items-center justify-center gap-2 px-8 py-3.5 bg-gradient-to-r from-[--color-primary] to-cyan-500 text-black rounded-xl text-lg font-black shadow-[0_0_20px_rgba(0,229,255,0.15)] hover:shadow-[0_0_30px_rgba(0,229,255,0.3)] hover:scale-[1.02] transition-all">
               <RefreshCw size={22} className="stroke-[3]" />
               Rigenera
             </button>

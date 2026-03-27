@@ -179,12 +179,12 @@ ${events}END:VCALENDAR`
         <div className="absolute top-0 right-0 w-48 h-48 bg-[--color-primary]/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
         <div className="relative z-10">
           <h1 className="text-4xl font-extrabold tracking-tight">
-            <span className="bg-gradient-to-r from-[--color-primary] via-emerald-400 to-teal-300 bg-clip-text text-transparent">Preferences</span>
+            <span className="bg-gradient-to-r from-[--color-primary] via-cyan-400 to-blue-500 bg-clip-text text-transparent">Preferences</span>
           </h1>
         </div>
         <button 
           onClick={handleSave}
-          className="relative z-10 flex items-center gap-2 bg-gradient-to-r from-[--color-primary] to-emerald-400 text-[--color-dark] font-extrabold px-6 py-3 rounded-xl hover:shadow-[0_0_25px_rgba(0,255,65,0.3)] transition-all duration-300 active:scale-95"
+          className="relative z-10 flex items-center gap-2 bg-gradient-to-r from-[--color-primary] to-cyan-500 text-black font-extrabold px-6 py-3 rounded-[16px] hover:shadow-[0_0_25px_rgba(0,229,255,0.3)] transition-all duration-300 active:scale-95"
         >
           <Save size={18} /> Salva
         </button>
@@ -209,7 +209,7 @@ ${events}END:VCALENDAR`
       </div>
 
       {/* Dati Corporei & Anamnesi PT */}
-      <section className="bg-white/5 p-8 rounded-2xl shadow-xl space-y-6">
+      <section className="bg-white/[0.03] backdrop-blur-2xl border border-white/[0.05] shadow-[0_4px_24px_rgba(0,0,0,0.2)] p-8 rounded-[24px] space-y-6">
         <div className="flex items-center gap-2 border-b border-white/10 pb-4 mb-4">
           <h2 className="text-xl font-black text-white">Dati Corporei & Anamnesi</h2>
         </div>
@@ -350,7 +350,7 @@ ${events}END:VCALENDAR`
       </section>
 
       {/* Target Nutrizionali & Restrizioni */}
-      <section className="bg-white/5 p-8 rounded-2xl shadow-xl space-y-6">
+      <section className="bg-white/[0.03] backdrop-blur-2xl border border-white/[0.05] shadow-[0_4px_24px_rgba(0,0,0,0.2)] p-8 rounded-[24px] space-y-6">
         <div className="flex items-center gap-2 border-b border-white/10 pb-4 mb-4">
           <h2 className="text-xl font-black text-white">Target Nutrizionali & Abitudini</h2>
         </div>
@@ -404,7 +404,7 @@ ${events}END:VCALENDAR`
       </section>
 
       {/* Orari Notifiche */}
-      <section className="bg-white/5 p-8 rounded-2xl shadow-xl space-y-6">
+      <section className="bg-white/[0.03] backdrop-blur-2xl border border-white/[0.05] shadow-[0_4px_24px_rgba(0,0,0,0.2)] p-8 rounded-[24px] space-y-6">
         <h2 className="text-xl font-black text-white border-b border-white/10 pb-4">Orari Pasti & Workout</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
           <div>
@@ -435,7 +435,7 @@ ${events}END:VCALENDAR`
       </section>
 
       {/* 🔔 Notifiche & Calendario */}
-      <section className="bg-white/5 p-8 rounded-2xl shadow-xl space-y-6">
+      <section className="bg-white/[0.03] backdrop-blur-2xl border border-white/[0.05] shadow-[0_4px_24px_rgba(0,0,0,0.2)] p-8 rounded-[24px] space-y-6">
         <h2 className="text-xl font-semibold text-primary flex items-center gap-2"><Bell size={22}/> Notifiche & Calendario</h2>
         
         {/* Blocco Istruzioni */}
@@ -465,7 +465,7 @@ ${events}END:VCALENDAR`
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Notification Button */}
-          <div className="bg-white/5 rounded-2xl p-6 flex flex-col items-center text-center gap-4 shadow-lg">
+          <div className="bg-white/[0.03] backdrop-blur-2xl border border-white/[0.05] shadow-[0_4px_24px_rgba(0,0,0,0.2)] rounded-[24px] p-8 flex flex-col items-center text-center gap-4">
             {notifPermission === 'granted' ? (
               <>
                 <CheckCircle2 className="text-primary" size={32}/>
@@ -498,7 +498,7 @@ ${events}END:VCALENDAR`
           </div>
 
           {/* Calendar Export Button */}
-          <div className="bg-white/5 rounded-2xl p-6 flex flex-col items-center text-center gap-4 shadow-lg">
+          <div className="bg-white/[0.03] backdrop-blur-2xl border border-white/[0.05] shadow-[0_4px_24px_rgba(0,0,0,0.2)] rounded-[24px] p-8 flex flex-col items-center text-center gap-4">
             <CalendarPlus className="text-primary" size={32}/>
             <span className="text-sm text-primary font-bold">Sincronizza Calendario</span>
             <p className="text-xs text-gray-500">Scarica un file .ics con 4 settimane di workout programmati all'orario che hai impostato. Aprilo per aggiungerlo al Calendario di iPhone/Android.</p>

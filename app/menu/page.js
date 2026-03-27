@@ -84,7 +84,7 @@ export default function MenuPage() {
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-4xl font-extrabold tracking-tight">
-              <span className="bg-gradient-to-r from-[--color-primary] via-emerald-400 to-teal-300 bg-clip-text text-transparent">Menù</span>
+              <span className="bg-gradient-to-r from-[--color-primary] via-cyan-400 to-blue-500 bg-clip-text text-transparent">Menù</span>
               <span className="text-white ml-2">Settimanale</span>
             </h1>
             <p className="text-gray-500 mt-2 text-sm">35 pasti calibrati dall'AI sul tuo profilo. Genera, mangia, domina.</p>
@@ -107,7 +107,7 @@ export default function MenuPage() {
             <button 
               onClick={() => handleGenerate()}
               disabled={loading}
-              className="w-full sm:w-auto group flex items-center justify-center gap-2 bg-gradient-to-r from-[--color-primary] to-emerald-400 text-[--color-dark] font-extrabold px-6 py-3.5 rounded-xl hover:shadow-[0_0_30px_rgba(0,255,65,0.3)] transition-all duration-300 disabled:opacity-40 active:scale-95"
+              className="w-full sm:w-auto group flex items-center justify-center gap-2 bg-gradient-to-r from-[--color-primary] to-cyan-500 text-black font-extrabold px-6 py-3.5 rounded-[16px] hover:shadow-[0_0_30px_rgba(0,229,255,0.3)] transition-all duration-300 disabled:opacity-40 active:scale-95"
             >
               {loading ? <Loader2 className="animate-spin" size={18} /> : <RefreshCw size={18} />}
               <span>{weeklyMenu ? 'Rigenera' : 'Genera IA'}</span>
@@ -192,9 +192,9 @@ export default function MenuPage() {
 
           <div className="grid grid-cols-1 gap-4">
             {selectedDay === 'Spesa' && weeklyMenu.lista_spesa ? (
-              <div className="bg-white/5 rounded-2xl p-8 shadow-xl">
+              <div className="bg-white/[0.03] backdrop-blur-2xl border border-white/[0.05] shadow-[0_4px_24px_rgba(0,0,0,0.2)] rounded-[24px] p-8">
                 <h2 className="text-2xl font-black text-white mb-8 flex items-center gap-3">
-                  <span className="bg-gradient-to-r from-[--color-primary] to-emerald-400 bg-clip-text text-transparent">🛒 Lista della Spesa Settimanale</span>
+                  <span className="bg-gradient-to-r from-[--color-primary] to-cyan-500 bg-clip-text text-transparent">🛒 Lista della Spesa Settimanale</span>
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {(Array.isArray(weeklyMenu.lista_spesa) ? weeklyMenu.lista_spesa : []).map((cat, idx) => (
@@ -214,8 +214,8 @@ export default function MenuPage() {
               </div>
             ) : (
               (Array.isArray(weeklyMenu.menu[selectedDay]) ? weeklyMenu.menu[selectedDay] : []).map((meal, i) => (
-                <div key={i} className="bg-white/5 rounded-2xl p-6 flex flex-col md:flex-row gap-6 hover:bg-white/10 transition-all duration-300 relative overflow-hidden group">
-                <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-[--color-primary] to-emerald-400 opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                <div key={i} className="bg-white/[0.03] backdrop-blur-2xl border border-white/[0.05] rounded-[24px] p-6 flex flex-col md:flex-row gap-6 hover:bg-white/[0.06] hover:shadow-[0_4px_24px_rgba(0,229,255,0.1)] transition-all duration-300 relative overflow-hidden group">
+                <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-[--color-primary] to-cyan-500 opacity-50 group-hover:opacity-100 transition-opacity"></div>
 
                 <div className="flex-1 space-y-3">
                   <div className="flex items-center gap-3">
@@ -245,7 +245,7 @@ export default function MenuPage() {
                   </div>
                   
                   {completedMeals.includes(meal.titolo) ? (
-                    <div className="mt-3 text-center bg-gradient-to-r from-[--color-primary] to-emerald-400 text-black py-3 rounded-xl text-sm font-black shadow-[0_0_20px_rgba(0,255,65,0.2)]">
+                    <div className="mt-3 text-center bg-gradient-to-r from-[--color-primary] to-cyan-500 text-black py-3 rounded-[14px] text-sm font-black shadow-[0_0_20px_rgba(0,229,255,0.2)]">
                       ✔️ Completato
                     </div>
                   ) : (
@@ -264,7 +264,7 @@ export default function MenuPage() {
                           setCompletedMeals(prev => [...prev, meal.titolo])
                         }
                       }}
-                      className="mt-3 text-center bg-white/10 hover:bg-white/20 text-white py-3 rounded-xl text-sm font-bold transition-all duration-300"
+                      className="mt-3 text-center bg-white/10 hover:bg-white/20 text-white py-3 rounded-[14px] text-sm font-bold transition-all duration-300"
                     >
                       Segna Mangiato
                     </button>
