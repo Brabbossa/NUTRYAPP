@@ -30,29 +30,29 @@ export default function Home() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Link href="/workout" className="group bg-[#1a1a2e] border border-[#2a2a3e] hover:border-[--color-primary]/50 hover:shadow-[0_0_15px_rgba(0,255,65,0.08)] hover:-translate-y-0.5 p-6 rounded-2xl transition-all duration-300 flex flex-col justify-between h-40 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-[--color-primary]/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-          <Dumbbell className="text-[--color-primary] mb-4" size={32} />
-          <div className="flex justify-between items-center">
-            <span className="font-bold text-lg">Vai al Workout AI</span>
-            <ArrowRight className="text-gray-500 group-hover:text-[--color-primary] transition-transform group-hover:translate-x-1" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Link href="/workout" className="group bg-white/5 border-transparent hover:bg-white/10 shadow-lg hover:shadow-[0_0_20px_rgba(0,255,65,0.15)] hover:-translate-y-1 p-6 rounded-2xl transition-all duration-300 flex flex-col justify-between h-40 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[--color-primary]/20 to-transparent rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110 opacity-50 group-hover:opacity-100"></div>
+          <Dumbbell className="text-[--color-primary] mb-4 relative z-10" size={32} />
+          <div className="flex justify-between items-center relative z-10">
+            <span className="font-black text-lg text-white group-hover:text-[--color-primary] transition-colors">Vai al Workout AI</span>
+            <ArrowRight className="text-gray-400 group-hover:text-[--color-primary] transition-transform group-hover:translate-x-1" />
           </div>
         </Link>
-        <Link href="/menu" className="group bg-[#1a1a2e] border border-[#2a2a3e] hover:border-[--color-primary]/50 hover:shadow-[0_0_15px_rgba(0,255,65,0.08)] hover:-translate-y-0.5 p-6 rounded-2xl transition-all duration-300 flex flex-col justify-between h-40 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-[--color-primary]/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-          <Utensils className="text-[--color-primary] mb-4" size={32} />
-          <div className="flex justify-between items-center">
-            <span className="font-bold text-lg">Il Tuo Menù</span>
-            <ArrowRight className="text-gray-500 group-hover:text-[--color-primary] transition-transform group-hover:translate-x-1" />
+        <Link href="/menu" className="group bg-white/5 border-transparent hover:bg-white/10 shadow-lg hover:shadow-[0_0_20px_rgba(0,255,65,0.15)] hover:-translate-y-1 p-6 rounded-2xl transition-all duration-300 flex flex-col justify-between h-40 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[--color-primary]/20 to-transparent rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110 opacity-50 group-hover:opacity-100"></div>
+          <Utensils className="text-[--color-primary] mb-4 relative z-10" size={32} />
+          <div className="flex justify-between items-center relative z-10">
+            <span className="font-black text-lg text-white group-hover:text-[--color-primary] transition-colors">Il Tuo Menù</span>
+            <ArrowRight className="text-gray-400 group-hover:text-[--color-primary] transition-transform group-hover:translate-x-1" />
           </div>
         </Link>
-        <Link href="/preferences" className="group bg-[#1a1a2e] border border-[#2a2a3e] hover:border-[--color-primary]/50 hover:shadow-[0_0_15px_rgba(0,255,65,0.08)] hover:-translate-y-0.5 p-6 rounded-2xl transition-all duration-300 flex flex-col justify-between h-40 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-[--color-primary]/10 rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
-          <Settings className="text-[--color-primary] mb-4" size={32} />
-          <div className="flex justify-between items-center">
-            <span className="font-bold text-lg">Preferenze & Dati</span>
-            <ArrowRight className="text-gray-500 group-hover:text-[--color-primary] transition-transform group-hover:translate-x-1" />
+        <Link href="/preferences" className="group bg-white/5 border-transparent hover:bg-white/10 shadow-lg hover:shadow-[0_0_20px_rgba(0,255,65,0.15)] hover:-translate-y-1 p-6 rounded-2xl transition-all duration-300 flex flex-col justify-between h-40 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[--color-primary]/20 to-transparent rounded-bl-full -mr-4 -mt-4 transition-transform group-hover:scale-110 opacity-50 group-hover:opacity-100"></div>
+          <Settings className="text-[--color-primary] mb-4 relative z-10" size={32} />
+          <div className="flex justify-between items-center relative z-10">
+            <span className="font-black text-lg text-white group-hover:text-[--color-primary] transition-colors">Preferenze & Dati</span>
+            <ArrowRight className="text-gray-400 group-hover:text-[--color-primary] transition-transform group-hover:translate-x-1" />
           </div>
         </Link>
       </div>
@@ -64,23 +64,23 @@ export default function Home() {
         </h2>
         
         {hasMenu ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {todayMenu.map(meal => (
-              <div key={meal.nome_pasto} className="bg-[#1a1a2e] border border-[#2a2a3e] rounded-xl p-5 hover:border-[--color-primary]/50 hover:shadow-[0_0_15px_rgba(0,255,65,0.08)] hover:-translate-y-0.5 transition-all duration-300">
-                <span className="text-xs font-bold text-[--color-primary] uppercase tracking-wider">{meal.nome_pasto}</span>
-                <h3 className="font-bold mt-1 text-lg truncate" title={meal.titolo}>{meal.titolo}</h3>
-                <div className="mt-4 flex gap-3 text-sm">
-                  <div className="bg-card px-2 py-1 rounded border border-muted text-gray-400"><strong className="text-white">{meal.pro}g</strong> PRO</div>
-                  <div className="bg-card px-2 py-1 rounded border border-muted text-gray-400"><strong className="text-white">{meal.cho}g</strong> CHO</div>
-                  <div className="bg-card px-2 py-1 rounded border border-muted text-gray-400"><strong className="text-white">{meal.fat}g</strong> FAT</div>
+              <div key={meal.nome_pasto} className="bg-white/5 rounded-2xl p-6 hover:bg-white/10 shadow-lg hover:shadow-[0_0_20px_rgba(0,255,65,0.15)] hover:-translate-y-1 transition-all duration-300 group">
+                <span className="text-[10px] font-black text-gray-400 group-hover:text-[--color-primary] uppercase tracking-widest">{meal.nome_pasto}</span>
+                <h3 className="font-black mt-2 text-xl truncate text-white" title={meal.titolo}>{meal.titolo}</h3>
+                <div className="mt-5 flex gap-2 text-sm">
+                  <div className="bg-white/10 px-3 py-1.5 rounded-lg text-gray-400 font-mono text-xs text-center flex-1"><strong className="block text-white text-base">{meal.pro}g</strong> PRO</div>
+                  <div className="bg-white/10 px-3 py-1.5 rounded-lg text-gray-400 font-mono text-xs text-center flex-1"><strong className="block text-white text-base">{meal.cho}g</strong> CHO</div>
+                  <div className="bg-white/10 px-3 py-1.5 rounded-lg text-gray-400 font-mono text-xs text-center flex-1"><strong className="block text-white text-base">{meal.fat}g</strong> FAT</div>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="bg-[#1a1a2e] border border-[#2a2a3e] rounded-2xl p-8 text-center flex flex-col items-center justify-center">
-            <p className="text-gray-400 mb-4">Non hai ancora generato il tuo menù intelligente.</p>
-            <Link href="/menu" className="bg-gradient-to-r from-[--color-primary] to-emerald-400 text-[--color-dark] font-bold px-6 py-3 rounded-lg hover:shadow-[0_0_20px_rgba(0,255,65,0.2)] transition-all duration-300">
+          <div className="bg-white/5 rounded-2xl p-10 shadow-lg text-center flex flex-col items-center justify-center">
+            <p className="text-gray-400 mb-6 text-lg">Non hai ancora generato il tuo menù intelligente.</p>
+            <Link href="/menu" className="bg-gradient-to-r from-[--color-primary] to-emerald-400 text-black font-black px-8 py-3.5 rounded-xl hover:shadow-[0_0_30px_rgba(0,255,65,0.3)] hover:scale-[1.02] transition-all duration-300">
               Genera Ora
             </Link>
           </div>

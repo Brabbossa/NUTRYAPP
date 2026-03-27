@@ -166,7 +166,7 @@ export default function WorkoutPage() {
 
       {/* Workout Display */}
       {currentPlan && !loading && (
-        <div className="bg-[--color-card] border border-[--color-primary]/50 shadow-[0_0_30px_rgba(0,255,65,0.05)] rounded-2xl overflow-hidden">
+        <div className="bg-white/5 shadow-xl rounded-2xl overflow-hidden mt-8">
           <div className="bg-[--color-primary]/10 border-b border-[--color-primary]/20 p-6 flex items-center justify-between">
             <h2 className="text-2xl font-bold text-[--color-primary]">{currentPlan.titolo}</h2>
             {!timerActive && (
@@ -206,13 +206,13 @@ export default function WorkoutPage() {
             )}
 
             {(Array.isArray(currentPlan.esercizi) ? currentPlan.esercizi : []).map((ex, i) => (
-              <div key={i} className="bg-[--color-dark] border border-[--color-muted] p-4 rounded-xl hover:border-[--color-primary] transition">
+              <div key={i} className="bg-black/40 p-5 rounded-xl hover:bg-black/60 transition-colors duration-300">
                 <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
-                  <h3 className="text-lg font-bold text-white">{i + 1}. {ex.nome}</h3>
+                  <h3 className="text-lg font-bold text-white"><span className="text-[--color-primary] mr-2">{i + 1}.</span>{ex.nome}</h3>
                   <div className="flex flex-wrap gap-2 text-sm font-mono tracking-wide">
-                    <span className="bg-[--color-muted] px-3 py-1 rounded text-gray-300">Serie: <strong className="text-white">{ex.serie}</strong></span>
-                    <span className="bg-[--color-muted] px-3 py-1 rounded text-gray-300">Rep: <strong className="text-white">{ex.ripetizioni}</strong></span>
-                    <span className="bg-[--color-muted] px-3 py-1 rounded text-gray-300">Rec: <strong className="text-white">{ex.recupero}</strong></span>
+                    <span className="bg-white/10 px-3 py-1.5 rounded-lg text-gray-300">Serie: <strong className="text-white">{ex.serie}</strong></span>
+                    <span className="bg-white/10 px-3 py-1.5 rounded-lg text-gray-300">Rep: <strong className="text-white">{ex.ripetizioni}</strong></span>
+                    <span className="bg-white/10 px-3 py-1.5 rounded-lg text-gray-300">Rec: <strong className="text-white">{ex.recupero}</strong></span>
                   </div>
                 </div>
                 {ex.note_carico && (
@@ -225,7 +225,7 @@ export default function WorkoutPage() {
             ))}
           </div>
 
-          <div className="border-t border-[--color-muted] bg-[--color-dark] p-6">
+          <div className="bg-black/50 p-6">
             {!isSaved ? (
               <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
                 <div>
@@ -234,9 +234,9 @@ export default function WorkoutPage() {
                 </div>
                 <div className="flex gap-3 w-full md:w-auto">
                   <input type="number" min="1" max="10" placeholder="RPE" value={rpe} onChange={e => setRpe(e.target.value)}
-                    className="w-24 bg-[--color-card] border border-[--color-muted] rounded-xl p-3 text-center text-xl font-bold outline-none focus:border-[--color-primary]" />
+                    className="w-24 bg-white/10 rounded-xl p-3 text-center text-xl font-black text-white outline-none focus:bg-white/20 transition-colors" />
                   <button onClick={handleSaveRPE} disabled={!rpe}
-                    className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-[--color-primary] text-[--color-dark] font-bold px-6 py-3 rounded-xl disabled:opacity-50 transition">
+                    className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-gradient-to-r from-[--color-primary] to-emerald-400 text-black font-black px-8 py-3 rounded-xl disabled:opacity-50 hover:shadow-[0_0_20px_rgba(0,255,65,0.3)] transition-all">
                     <Save size={18} /> SALVA
                   </button>
                 </div>
@@ -248,7 +248,7 @@ export default function WorkoutPage() {
             )}
             
             {!isSaved && (
-              <div className="mt-6 p-4 bg-[--color-card] rounded-xl border border-[--color-muted]/50">
+              <div className="mt-6 p-5 bg-white/5 rounded-xl">
                 <h5 className="text-xs font-bold text-[--color-primary] uppercase tracking-widest mb-2">Guida all'RPE (Sforzo Percepito)</h5>
                 <p className="text-[11px] text-gray-500 leading-relaxed">
                   L'<strong>RPE (Rate of Perceived Exertion)</strong> è una scala da 1 a 10 che misura quanto è stato duro l'allenamento:
@@ -273,11 +273,11 @@ export default function WorkoutPage() {
           <h3 className="text-lg font-bold text-gray-400 mb-4">Ultimi Allenamenti</h3>
           <div className="space-y-3">
             {workoutHistory.slice(-5).reverse().map((w, i) => (
-              <div key={i} className="bg-[--color-dark] border border-[--color-muted] p-4 rounded-xl flex items-center justify-between">
+              <div key={i} className="bg-white/5 p-5 rounded-xl flex items-center justify-between hover:bg-white/10 transition-colors">
                 <span className="font-bold text-white">{w.target}</span>
                 <div className="flex items-center gap-4">
                   <span className="text-sm text-gray-400">{new Date(w.date).toLocaleDateString()}</span>
-                  <span className="bg-[--color-primary]/20 text-[--color-primary] px-3 py-1 rounded text-sm font-bold">RPE {w.rpe}</span>
+                  <span className="bg-[--color-primary] text-black px-3 py-1 rounded-lg text-sm font-black">RPE {w.rpe}</span>
                 </div>
               </div>
             ))}

@@ -170,8 +170,7 @@ ${events}END:VCALENDAR`
     setToast('📅 File calendario scaricato! Aprilo per aggiungerlo al tuo calendario.')
     setTimeout(() => setToast(''), 5000)
   }
-
-  const inputClass = "w-full bg-dark border border-muted rounded p-2 text-white outline-none focus:border-primary"
+  const inputClass = "w-full bg-white/5 rounded-xl p-3 text-white outline-none focus:bg-white/10 transition-colors"
 
   return (
     <div className="max-w-3xl mx-auto space-y-6 pb-20">
@@ -210,9 +209,9 @@ ${events}END:VCALENDAR`
       </div>
 
       {/* Dati Corporei & Anamnesi PT */}
-      <section className="bg-card p-6 rounded-2xl border border-muted space-y-6">
-        <div className="flex items-center gap-2 border-b border-muted pb-3 mb-2">
-          <h2 className="text-xl font-semibold text-primary">Dati Corporei & Anamnesi</h2>
+      <section className="bg-white/5 p-8 rounded-2xl shadow-xl space-y-6">
+        <div className="flex items-center gap-2 border-b border-white/10 pb-4 mb-4">
+          <h2 className="text-xl font-black text-white">Dati Corporei & Anamnesi</h2>
         </div>
         
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
@@ -341,39 +340,39 @@ ${events}END:VCALENDAR`
           </div>
         </div>
 
-        <div className="pt-4 border-t border-muted bg-dark rounded-xl p-4 flex items-center justify-between">
+        <div className="pt-4 border-t border-white/10 bg-black/30 rounded-xl p-5 flex items-center justify-between mt-4">
           <div>
             <p className="text-sm text-gray-400">TDEE Stimato (Fabbisogno Calorico Giornaliero)</p>
             <p className="text-xs text-gray-500">Usalo per calibrare i target di macronutrienti qui sotto.</p>
           </div>
-          <p className="text-3xl font-bold text-primary">{formData.tdee} <span className="text-lg text-gray-400 font-normal">kcal/gg</span></p>
+          <p className="text-3xl font-black text-[--color-primary]">{formData.tdee} <span className="text-lg text-gray-400 font-normal">kcal/gg</span></p>
         </div>
       </section>
 
       {/* Target Nutrizionali & Restrizioni */}
-      <section className="bg-card p-6 rounded-2xl border border-muted space-y-6">
-        <div className="flex items-center gap-2 border-b border-muted pb-3 mb-2">
-          <h2 className="text-xl font-semibold text-primary">Target Nutrizionali & Abitudini</h2>
+      <section className="bg-white/5 p-8 rounded-2xl shadow-xl space-y-6">
+        <div className="flex items-center gap-2 border-b border-white/10 pb-4 mb-4">
+          <h2 className="text-xl font-black text-white">Target Nutrizionali & Abitudini</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Proteine Tetto Max (g/pasto)</label>
+            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Proteine Tetto Max (g/pasto)</label>
             <input type="number" name="protein_target" value={formData.protein_target} onChange={handleChange} className={inputClass} />
           </div>
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Zuccheri Tetto Max (g/giorno)</label>
+            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Zuccheri Tetto Max (g/giorno)</label>
             <input type="number" name="sugar_limit" value={formData.sugar_limit} onChange={handleChange} className={inputClass} />
           </div>
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Acqua Target (Litri/giorno)</label>
+            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Acqua Target (Litri/giorno)</label>
             <input type="number" step="0.1" name="water_target" value={formData.water_target || 2.5} onChange={handleChange} className={inputClass} />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Tipo Dieta</label>
+            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Tipo Dieta</label>
             <select name="diet_type" value={formData.diet_type} onChange={handleChange} className={inputClass}>
               <option value="Onnivoro">Flessibile / Onnivoro</option>
               <option value="Vegetariano">Vegetariano</option>
@@ -383,7 +382,7 @@ ${events}END:VCALENDAR`
             </select>
           </div>
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Pasti Fuori Casa / Settimana</label>
+            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Pasti Fuori Casa / Settimana</label>
             <select name="meals_out" value={formData.meals_out || 'Mai'} onChange={handleChange} className={inputClass}>
               <option value="Mai">Quasi Mai (Preparazione 100% meal prep)</option>
               <option value="1-2 a settimana">1-2 a settimana (Es. Sabato/Domenica)</option>
@@ -392,51 +391,51 @@ ${events}END:VCALENDAR`
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Allergie / Intolleranze / Cibi Odiati</label>
+            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Allergie / Intolleranze / Cibi Odiati</label>
             <input type="text" name="allergies" value={formData.allergies} onChange={handleChange} placeholder="Es. Lattosio, Glutine, Broccoli, Tonno" className={inputClass} />
           </div>
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Piano Integrazione in Uso</label>
+            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Piano Integrazione in Uso</label>
             <input type="text" name="supplements" value={formData.supplements || ''} onChange={handleChange} placeholder="Es. Whey, Creatina 5g, Omega 3, Vit. D" className={inputClass} />
           </div>
         </div>
       </section>
 
       {/* Orari Notifiche */}
-      <section className="bg-card p-6 rounded-2xl border border-muted space-y-4">
-        <h2 className="text-xl font-semibold text-primary">Orari Pasti & Workout</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <section className="bg-white/5 p-8 rounded-2xl shadow-xl space-y-6">
+        <h2 className="text-xl font-black text-white border-b border-white/10 pb-4">Orari Pasti & Workout</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Colazione</label>
+            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Colazione</label>
             <input type="time" name="meal_times.breakfast" value={formData.meal_times?.breakfast || '08:00'} onChange={handleChange} className={inputClass} />
           </div>
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Spuntino 1</label>
+            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Spuntino 1</label>
             <input type="time" name="meal_times.snack1" value={formData.meal_times?.snack1 || '10:30'} onChange={handleChange} className={inputClass} />
           </div>
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Pranzo</label>
+            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Pranzo</label>
             <input type="time" name="meal_times.lunch" value={formData.meal_times?.lunch || '13:00'} onChange={handleChange} className={inputClass} />
           </div>
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Spuntino 2</label>
+            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Spuntino 2</label>
             <input type="time" name="meal_times.snack2" value={formData.meal_times?.snack2 || '16:30'} onChange={handleChange} className={inputClass} />
           </div>
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Cena</label>
+            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Cena</label>
             <input type="time" name="meal_times.dinner" value={formData.meal_times?.dinner || '20:00'} onChange={handleChange} className={inputClass} />
           </div>
           <div>
-            <label className="block text-sm text-gray-400 mb-1 text-primary font-bold">🏋️ Workout</label>
+            <label className="block text-sm text-[--color-primary] mb-2 font-bold uppercase tracking-wider text-[11px]">🏋️ Workout</label>
             <input type="time" name="workout_time" value={formData.workout_time || '18:00'} onChange={handleChange} className={inputClass} />
           </div>
         </div>
       </section>
 
       {/* 🔔 Notifiche & Calendario */}
-      <section className="bg-card p-6 rounded-2xl border border-primary/30 space-y-5 shadow-[0_0_20px_rgba(0,255,65,0.05)]">
+      <section className="bg-white/5 p-8 rounded-2xl shadow-xl space-y-6">
         <h2 className="text-xl font-semibold text-primary flex items-center gap-2"><Bell size={22}/> Notifiche & Calendario</h2>
         
         {/* Blocco Istruzioni */}
@@ -464,9 +463,9 @@ ${events}END:VCALENDAR`
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Notification Button */}
-          <div className="bg-dark border border-muted rounded-2xl p-5 flex flex-col items-center text-center gap-3">
+          <div className="bg-white/5 rounded-2xl p-6 flex flex-col items-center text-center gap-4 shadow-lg">
             {notifPermission === 'granted' ? (
               <>
                 <CheckCircle2 className="text-primary" size={32}/>
@@ -499,7 +498,7 @@ ${events}END:VCALENDAR`
           </div>
 
           {/* Calendar Export Button */}
-          <div className="bg-dark border border-muted rounded-2xl p-5 flex flex-col items-center text-center gap-3">
+          <div className="bg-white/5 rounded-2xl p-6 flex flex-col items-center text-center gap-4 shadow-lg">
             <CalendarPlus className="text-primary" size={32}/>
             <span className="text-sm text-primary font-bold">Sincronizza Calendario</span>
             <p className="text-xs text-gray-500">Scarica un file .ics con 4 settimane di workout programmati all'orario che hai impostato. Aprilo per aggiungerlo al Calendario di iPhone/Android.</p>

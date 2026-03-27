@@ -192,8 +192,10 @@ export default function MenuPage() {
 
           <div className="grid grid-cols-1 gap-4">
             {selectedDay === 'Spesa' && weeklyMenu.lista_spesa ? (
-              <div className="bg-[--color-card] border border-[--color-primary]/30 rounded-2xl p-6 shadow-[0_0_20px_rgba(0,255,65,0.05)]">
-                <h2 className="text-2xl font-bold text-[--color-primary] mb-6 flex items-center gap-2">🛒 Lista della Spesa Settimanale</h2>
+              <div className="bg-white/5 rounded-2xl p-8 shadow-xl">
+                <h2 className="text-2xl font-black text-white mb-8 flex items-center gap-3">
+                  <span className="bg-gradient-to-r from-[--color-primary] to-emerald-400 bg-clip-text text-transparent">🛒 Lista della Spesa Settimanale</span>
+                </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {(Array.isArray(weeklyMenu.lista_spesa) ? weeklyMenu.lista_spesa : []).map((cat, idx) => (
                     <div key={idx} className="space-y-3">
@@ -212,12 +214,13 @@ export default function MenuPage() {
               </div>
             ) : (
               (Array.isArray(weeklyMenu.menu[selectedDay]) ? weeklyMenu.menu[selectedDay] : []).map((meal, i) => (
-                <div key={i} className="bg-[--color-card] border border-[--color-muted] rounded-2xl p-6 flex flex-col md:flex-row gap-6 hover:border-[--color-primary]/50 transition relative overflow-hidden">
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-[--color-primary]/40"></div>
+                <div key={i} className="bg-white/5 rounded-2xl p-6 flex flex-col md:flex-row gap-6 hover:bg-white/10 transition-all duration-300 relative overflow-hidden group">
+                <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-gradient-to-b from-[--color-primary] to-emerald-400 opacity-50 group-hover:opacity-100 transition-opacity"></div>
+
                 <div className="flex-1 space-y-3">
                   <div className="flex items-center gap-3">
-                    <span className="bg-[--color-dark] text-xs font-bold text-gray-400 px-2 py-1 rounded border border-[--color-muted] uppercase tracking-wider">{meal.nome_pasto || 'PASTO'}</span>
-                    <h3 className="text-lg font-bold text-[--color-primary]">{meal.titolo || 'Pasto Generico'}</h3>
+                    <span className="bg-white/10 text-xs font-bold text-gray-300 px-3 py-1.5 rounded-lg uppercase tracking-wider">{meal.nome_pasto || 'PASTO'}</span>
+                    <h3 className="text-xl font-bold text-white group-hover:text-[--color-primary] transition-colors">{meal.titolo || 'Pasto Generico'}</h3>
                   </div>
                   <p className="text-sm text-gray-400"><strong className="text-white">Ingredienti:</strong> {meal.ingredienti}</p>
                   <div className="mt-2">
@@ -235,15 +238,15 @@ export default function MenuPage() {
                 </div>
                 <div className="md:w-48 flex flex-col gap-2 shrink-0 justify-center">
                   <div className="grid grid-cols-2 gap-2 text-xs font-mono text-center">
-                    <div className="bg-[--color-dark] border border-[--color-muted] p-2 rounded-lg"><span className="block text-gray-500 mb-1">PRO</span><span className="text-[--color-primary] font-bold text-sm">{meal.pro}g</span></div>
-                    <div className="bg-[--color-dark] border border-[--color-muted] p-2 rounded-lg"><span className="block text-gray-500 mb-1">CHO</span><span className="text-white font-bold text-sm">{meal.cho}g</span></div>
-                    <div className="bg-[--color-dark] border border-[--color-muted] p-2 rounded-lg"><span className="block text-gray-500 mb-1">FAT</span><span className="text-white font-bold text-sm">{meal.fat}g</span></div>
-                    <div className="bg-[--color-dark] border border-[--color-muted] p-2 rounded-lg"><span className="block text-gray-500 mb-1">ZUC</span><span className="text-red-400 font-bold text-sm">{meal.zuccheri}g</span></div>
+                    <div className="bg-white/5 p-3 rounded-xl flex flex-col items-center justify-center"><span className="block text-gray-400 mb-1 text-[10px] uppercase font-bold tracking-wider">PRO</span><span className="text-white font-black text-base">{meal.pro}g</span></div>
+                    <div className="bg-white/5 p-3 rounded-xl flex flex-col items-center justify-center"><span className="block text-gray-400 mb-1 text-[10px] uppercase font-bold tracking-wider">CHO</span><span className="text-white font-black text-base">{meal.cho}g</span></div>
+                    <div className="bg-white/5 p-3 rounded-xl flex flex-col items-center justify-center"><span className="block text-gray-400 mb-1 text-[10px] uppercase font-bold tracking-wider">FAT</span><span className="text-white font-black text-base">{meal.fat}g</span></div>
+                    <div className="bg-white/5 p-3 rounded-xl flex flex-col items-center justify-center"><span className="block text-gray-400 mb-1 text-[10px] uppercase font-bold tracking-wider">ZUC</span><span className="text-red-400 font-black text-base">{meal.zuccheri}g</span></div>
                   </div>
                   
                   {completedMeals.includes(meal.titolo) ? (
-                    <div className="mt-2 text-center bg-green-500/20 text-green-400 py-2 rounded-lg text-sm font-bold border border-green-500/50">
-                      ✔️ Mangiato Oggi
+                    <div className="mt-3 text-center bg-gradient-to-r from-[--color-primary] to-emerald-400 text-black py-3 rounded-xl text-sm font-black shadow-[0_0_20px_rgba(0,255,65,0.2)]">
+                      ✔️ Completato
                     </div>
                   ) : (
                     <button 
@@ -261,7 +264,7 @@ export default function MenuPage() {
                           setCompletedMeals(prev => [...prev, meal.titolo])
                         }
                       }}
-                      className="mt-2 text-center bg-dark hover:bg-[--color-primary]/20 text-gray-300 hover:text-[--color-primary] py-2 rounded-lg text-sm font-bold border border-[--color-muted] hover:border-[--color-primary] transition-all"
+                      className="mt-3 text-center bg-white/10 hover:bg-white/20 text-white py-3 rounded-xl text-sm font-bold transition-all duration-300"
                     >
                       Segna Mangiato
                     </button>

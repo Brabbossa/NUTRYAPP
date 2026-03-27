@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useUser } from '../context/UserContext'
-import { Activity, Brain } from 'lucide-react'
+import { Activity, Brain, RefreshCw } from 'lucide-react'
 import { supabase } from '../lib/supabaseClient'
 
 export default function ReportPage() {
@@ -82,12 +82,12 @@ export default function ReportPage() {
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <div className="bg-[#1a1a2e] border border-[#2a2a3e] p-6 rounded-2xl flex flex-col items-center justify-center text-center">
+        <div className="bg-white/5 p-6 rounded-2xl flex flex-col items-center justify-center text-center shadow-lg">
           <span className="text-4xl font-black text-white">{stats.meals}</span>
           <span className="text-sm text-gray-400 font-bold uppercase tracking-wider mt-1">Pasti Completati</span>
         </div>
-        <div className="bg-[#1a1a2e] border border-[#2a2a3e] p-6 rounded-2xl flex flex-col items-center justify-center text-center">
-          <span className="text-4xl font-black text-[--color-primary]">{stats.workouts}</span>
+        <div className="bg-white/5 p-6 rounded-2xl flex flex-col items-center justify-center text-center shadow-lg">
+          <span className="text-4xl font-black text-white group-hover:text-[--color-primary] transition-colors">{stats.workouts}</span>
           <span className="text-sm text-gray-400 font-bold uppercase tracking-wider mt-1">Workout Fatti</span>
         </div>
       </div>
@@ -99,21 +99,22 @@ export default function ReportPage() {
       )}
 
       {loading && (
-        <div className="flex flex-col items-center justify-center p-12 bg-card border border-muted rounded-2xl">
-          <Activity className="text-primary animate-pulse mb-4" size={48} />
-          <h3 className="text-lg font-bold text-white mb-2">Calcolo Diagnosi in Corso...</h3>
-          <p className="text-sm text-gray-500 text-center max-w-sm">Synapse sta analizzando ogni grammo di macro e l'RPE dei tuoi ultimi 7 giorni per formulare una diagnosi brutale ma necessaria.</p>
+        <div className="flex flex-col items-center justify-center p-12 bg-white/5 rounded-2xl shadow-xl">
+          <Activity className="text-[--color-primary] animate-pulse mb-4" size={48} />
+          <h3 className="text-lg font-black text-white mb-2">Calcolo Diagnosi in Corso...</h3>
+          <p className="text-sm text-gray-400 text-center max-w-sm">Synapse sta analizzando ogni grammo di macro e l'RPE dei tuoi ultimi 7 giorni per formulare una diagnosi brutale ma necessaria.</p>
         </div>
       )}
 
       {error && <div className="p-4 bg-red-500/20 text-red-500 border border-red-500/30 rounded-xl font-semibold">{error}</div>}
 
       {reportHtml && !loading && (
-         <div className="bg-card border border-primary/30 p-8 rounded-2xl relative shadow-[0_0_50px_rgba(0,255,65,0.05)] text-gray-300 synapse-report">
+         <div className="bg-white/5 p-8 rounded-2xl relative shadow-[0_0_50px_rgba(0,255,65,0.05)] text-gray-300 synapse-report">
             <div dangerouslySetInnerHTML={{ __html: reportHtml }} />
             
-            <button onClick={generateReport} className="mt-12 px-6 py-3 border border-primary text-primary rounded-lg text-sm font-bold hover:bg-primary/20 transition">
-              Rigenera Analisi
+            <button onClick={generateReport} className="mt-12 flex items-center justify-center gap-2 px-8 py-3.5 bg-gradient-to-r from-[--color-primary] to-emerald-400 text-black rounded-xl text-lg font-black shadow-[0_0_20px_rgba(0,255,65,0.15)] hover:shadow-[0_0_30px_rgba(0,255,65,0.3)] hover:scale-[1.02] transition-all">
+              <RefreshCw size={22} className="stroke-[3]" />
+              Rigenera
             </button>
          </div>
       )}
