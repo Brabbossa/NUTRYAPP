@@ -17,27 +17,7 @@ function parseSerie(serie) {
   return match ? parseInt(match[1]) : 3
 }
 
-// TTS speak function using ElevenLabs
-async function speak(text) {
-  if (typeof window === 'undefined') return
-  try {
-    const res = await fetch('/api/tts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text })
-    })
-    if (!res.ok) throw new Error('TTS server error')
-    const blob = await res.blob()
-    const url = URL.createObjectURL(blob)
-    const audio = new Audio(url)
-    
-    // Auto-clean blob to prevent memory leak
-    audio.onended = () => URL.revokeObjectURL(url)
-    await audio.play()
-  } catch (error) {
-    console.error('ElevenLabs TTS failed. Text was:', text, error)
-  }
-}
+// TTS functionality moved into the component to handle Autoplay safely
 
 // Timer phases
 const PHASE = {
@@ -60,6 +40,33 @@ export function WorkoutTimer({ plan, onComplete }) {
   const [voiceEnabled, setVoiceEnabled] = useState(true)
   const intervalRef = useRef(null)
   const elapsedRef = useRef(null)
+  const audioRef = useRef(null)
+  
+  // Keep one reliable audio element for bypass Autoplay policies
+  useEffect(() => {
+    audioRef.current = new Audio()
+  }, [])
+  
+  const voiceAnnounce = useCallback(async (text) => {
+    if (!voiceEnabled || !audioRef.current) return
+    try {
+      const res = await fetch('/api/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      })
+      if (!res.ok) throw new Error('TTS fallito')
+      
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      
+      // Assicura riproduzione asincrona
+      audioRef.current.src = url
+      await audioRef.current.play()
+    } catch (e) {
+      console.error('Audio failed:', e)
+    }
+  }, [voiceEnabled])
 
   const exercises = plan?.esercizi || []
   const currentExercise = exercises[exerciseIdx]
@@ -99,10 +106,10 @@ export function WorkoutTimer({ plan, onComplete }) {
             return 0
           }
           // Voice cues at key moments
-          if (prev === 11 && voiceEnabled) speak('Dieci secondi alla fine della pausa')
-          if (prev === 4 && voiceEnabled) speak('Tre, due, uno')
-          if (totalTime > 20 && prev === Math.floor(totalTime / 2) && voiceEnabled) {
-            speak('Forza Enrico! Cazzo daje uomo! Sei il più forte! Sbracali tutti!')
+          if (prev === 11) voiceAnnounce('Dieci secondi alla fine della pausa')
+          if (prev === 4) voiceAnnounce('Tre, due, uno')
+          if (totalTime > 20 && prev === Math.floor(totalTime / 2)) {
+            voiceAnnounce('Forza Enrico! Cazzo daje uomo! Sei il più forte! Sbracali tutti!')
           }
           return prev - 1
         })
@@ -132,7 +139,7 @@ export function WorkoutTimer({ plan, onComplete }) {
               body: JSON.stringify({ phase: phase.toLowerCase() })
             })
             const data = await res.json()
-            if (data.text) speak(data.text)
+            if (data.text) voiceAnnounce(data.text)
           } catch(e) {}
           scheduleNext() // Schedule the next one
         }, delay);
@@ -144,9 +151,7 @@ export function WorkoutTimer({ plan, onComplete }) {
     };
   }, [phase, isPaused, voiceEnabled])
 
-  const voiceAnnounce = useCallback((text) => {
-    if (voiceEnabled) speak(text)
-  }, [voiceEnabled])
+
 
   // Start the workout
   const startWorkout = () => {

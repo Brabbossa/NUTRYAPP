@@ -11,7 +11,8 @@ export async function POST(req) {
     if (!text) return new Response('Text is required', { status: 400 })
 
     const elevenLabsApiKey = process.env.ELEVENLABS_API_KEY || 'sk_33c50e0b745e8a1f725faf1a8cb2a0720dedf4213d1f5161'
-    const voiceId = 'pNInz6obpgDQGcFmaJcg' // Adam
+    if (!elevenLabsApiKey) return new Response('ELEVENLABS_API_KEY is not configured', { status: 500 })
+    const voiceId = 'JBFqnCBsd6RMkjVDRZzb' // George (compatibile col tuo account)
 
     const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
       method: 'POST',
