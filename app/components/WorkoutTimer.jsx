@@ -17,20 +17,26 @@ function parseSerie(serie) {
   return match ? parseInt(match[1]) : 3
 }
 
-// TTS speak function
-function speak(text, lang = 'it-IT') {
-  if (typeof window === 'undefined' || !window.speechSynthesis) return
-  window.speechSynthesis.cancel()
-  const utterance = new SpeechSynthesisUtterance(text)
-  utterance.lang = lang
-  utterance.rate = 1.0
-  utterance.pitch = 1.0
-  utterance.volume = 1.0
-  // Try to find an Italian voice
-  const voices = window.speechSynthesis.getVoices()
-  const italianVoice = voices.find(v => v.lang.startsWith('it'))
-  if (italianVoice) utterance.voice = italianVoice
-  window.speechSynthesis.speak(utterance)
+// TTS speak function using ElevenLabs
+async function speak(text) {
+  if (typeof window === 'undefined') return
+  try {
+    const res = await fetch('/api/tts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text })
+    })
+    if (!res.ok) throw new Error('TTS server error')
+    const blob = await res.blob()
+    const url = URL.createObjectURL(blob)
+    const audio = new Audio(url)
+    
+    // Auto-clean blob to prevent memory leak
+    audio.onended = () => URL.revokeObjectURL(url)
+    await audio.play()
+  } catch (error) {
+    console.error('ElevenLabs TTS failed. Text was:', text, error)
+  }
 }
 
 // Timer phases
@@ -41,16 +47,7 @@ const PHASE = {
   FINISHED: 'finished',
 }
 
-// Random goliardic quotes for motivation
-const MOTIVATIONAL_PHRASES = [
-  "Forza cazzo spingi uomo!! Quella fica non si leccherà da sola!",
-  "Sveglia!! Meno chiacchiere e più ghisa brutto secco!",
-  "Sei venuto qui per pettinare le bambole o per spaccare i dischi?! Tira!",
-  "Muovi quel culo! Il dolore di oggi è la figa di domani!!",
-  "Ancora una! Se molli adesso sei un flaccido senza speranza!",
-  "Daje!! Sfondiamo questo pavimento con quei manubri!!",
-  "Urla!! Fatti sentire!! Spingi come se non ci fosse un cazzo di domani!"
-];
+// Motivational engine moved to Groq API
 
 export function WorkoutTimer({ plan, onComplete }) {
   const [phase, setPhase] = useState(PHASE.IDLE)
@@ -121,16 +118,23 @@ export function WorkoutTimer({ plan, onComplete }) {
     }
   }, [phase, countdown])
 
-  // Random motivation phrase during EXERCISE phase
+  // Random motivation phrase during EXERCISE and REST phases
   useEffect(() => {
-    if (phase === PHASE.EXERCISE && !isPaused && voiceEnabled) {
+    if ((phase === PHASE.EXERCISE || phase === PHASE.REST) && !isPaused && voiceEnabled) {
       const scheduleNext = () => {
-        // Random tra 8 e 40 secondi
-        const delay = Math.floor(Math.random() * (40000 - 8000 + 1)) + 8000;
-        motivationTimeoutRef.current = setTimeout(() => {
-          const randomPhrase = MOTIVATIONAL_PHRASES[Math.floor(Math.random() * MOTIVATIONAL_PHRASES.length)];
-          speak(randomPhrase);
-          scheduleNext(); // Schedule the next one
+        // Random tra 15 e 45 secondi
+        const delay = Math.floor(Math.random() * (45000 - 15000 + 1)) + 15000;
+        motivationTimeoutRef.current = setTimeout(async () => {
+          try {
+            const res = await fetch('/api/generate-insult', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ phase: phase.toLowerCase() })
+            })
+            const data = await res.json()
+            if (data.text) speak(data.text)
+          } catch(e) {}
+          scheduleNext() // Schedule the next one
         }, delay);
       };
       scheduleNext();
@@ -211,7 +215,6 @@ export function WorkoutTimer({ plan, onComplete }) {
   const stopWorkout = () => {
     clearInterval(intervalRef.current)
     clearInterval(elapsedRef.current)
-    window.speechSynthesis?.cancel()
     setPhase(PHASE.IDLE)
     setElapsed(0)
   }
