@@ -1,0 +1,227 @@
+[
+  {
+    "name": "Petto di pollo",
+    "category": "Carne",
+    "energy_kcal": 104,
+    "protein_g": 23.3,
+    "lipids_g": 1.2,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Riso Basmati",
+    "category": "Cereali",
+    "energy_kcal": 349,
+    "protein_g": 8.4,
+    "lipids_g": 0.6,
+    "carbs_g": 78.5,
+    "fiber_g": 1.2
+  },
+  {
+    "name": "Pasta di semola, integrale",
+    "category": "Cereali",
+    "energy_kcal": 348,
+    "protein_g": 14.0,
+    "lipids_g": 2.5,
+    "carbs_g": 67.2,
+    "fiber_g": 8.0
+  },
+  {
+    "name": "Fiocchi d'avena",
+    "category": "Cereali",
+    "energy_kcal": 389,
+    "protein_g": 16.9,
+    "lipids_g": 6.9,
+    "carbs_g": 66.3,
+    "fiber_g": 10.6
+  },
+  {
+    "name": "Olio extravergine di oliva",
+    "category": "Grassi",
+    "energy_kcal": 899,
+    "protein_g": 0.0,
+    "lipids_g": 99.9,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Uovo di gallina, intero",
+    "category": "Uova",
+    "energy_kcal": 143,
+    "protein_g": 12.6,
+    "lipids_g": 9.5,
+    "carbs_g": 0.7,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Albume d'uovo",
+    "category": "Uova",
+    "energy_kcal": 52,
+    "protein_g": 10.9,
+    "lipids_g": 0.2,
+    "carbs_g": 0.7,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Mela, con buccia",
+    "category": "Frutta",
+    "energy_kcal": 52,
+    "protein_g": 0.3,
+    "lipids_g": 0.2,
+    "carbs_g": 13.8,
+    "fiber_g": 2.4
+  },
+  {
+    "name": "Banana",
+    "category": "Frutta",
+    "energy_kcal": 89,
+    "protein_g": 1.1,
+    "lipids_g": 0.3,
+    "carbs_g": 22.8,
+    "fiber_g": 2.6
+  },
+  {
+    "name": "Proteine del siero del latte (Whey)",
+    "category": "Integratori",
+    "energy_kcal": 380,
+    "protein_g": 80.0,
+    "lipids_g": 5.0,
+    "carbs_g": 4.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Salmone fresco",
+    "category": "Pesce",
+    "energy_kcal": 190,
+    "protein_g": 19.9,
+    "lipids_g": 12.3,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Carne bovina magra (Filetto)",
+    "category": "Carne",
+    "energy_kcal": 113,
+    "protein_g": 20.5,
+    "lipids_g": 3.4,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Lenticchie secche",
+    "category": "Legumi",
+    "energy_kcal": 353,
+    "protein_g": 25.8,
+    "lipids_g": 1.1,
+    "carbs_g": 60.1,
+    "fiber_g": 30.5
+  },
+  {
+    "name": "Ceci secchi",
+    "category": "Legumi",
+    "energy_kcal": 364,
+    "protein_g": 19.3,
+    "lipids_g": 6.0,
+    "carbs_g": 60.6,
+    "fiber_g": 17.4
+  },
+  {
+    "name": "Broccoli",
+    "category": "Verdura",
+    "energy_kcal": 34,
+    "protein_g": 2.8,
+    "lipids_g": 0.4,
+    "carbs_g": 6.6,
+    "fiber_g": 2.6
+  },
+  {
+    "name": "Zucchine",
+    "category": "Verdura",
+    "energy_kcal": 16,
+    "protein_g": 1.2,
+    "lipids_g": 0.2,
+    "carbs_g": 3.1,
+    "fiber_g": 1.0
+  },
+  {
+    "name": "Latte vaccino parzialmente scremato",
+    "category": "Latticini",
+    "energy_kcal": 47,
+    "protein_g": 3.3,
+    "lipids_g": 1.5,
+    "carbs_g": 5.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Yogurt greco magro (0%)",
+    "category": "Latticini",
+    "energy_kcal": 59,
+    "protein_g": 10.0,
+    "lipids_g": 0.0,
+    "carbs_g": 4.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Burro di arachidi, puro",
+    "category": "Grassi",
+    "energy_kcal": 588,
+    "protein_g": 25.0,
+    "lipids_g": 50.0,
+    "carbs_g": 20.0,
+    "fiber_g": 6.0
+  },
+  {
+    "name": "Mandorle",
+    "category": "Frutta Secca",
+    "energy_kcal": 579,
+    "protein_g": 21.2,
+    "lipids_g": 49.9,
+    "carbs_g": 21.6,
+    "fiber_g": 12.5
+  },
+  {
+    "name": "Noci",
+    "category": "Frutta Secca",
+    "energy_kcal": 654,
+    "protein_g": 15.2,
+    "lipids_g": 65.2,
+    "carbs_g": 13.7,
+    "fiber_g": 6.7
+  },
+  {
+    "name": "Tofu",
+    "category": "Sostituti Vegetali",
+    "energy_kcal": 76,
+    "protein_g": 8.1,
+    "lipids_g": 4.8,
+    "carbs_g": 1.9,
+    "fiber_g": 0.3
+  },
+  {
+    "name": "Tonno in scatola al naturale",
+    "category": "Pesce",
+    "energy_kcal": 116,
+    "protein_g": 25.5,
+    "lipids_g": 1.0,
+    "carbs_g": 0.0,
+    "fiber_g": 0.0
+  },
+  {
+    "name": "Patate senza buccia",
+    "category": "Verdura",
+    "energy_kcal": 77,
+    "protein_g": 2.0,
+    "lipids_g": 0.1,
+    "carbs_g": 17.5,
+    "fiber_g": 2.2
+  },
+  {
+    "name": "Gallette di riso",
+    "category": "Cereali",
+    "energy_kcal": 387,
+    "protein_g": 8.0,
+    "lipids_g": 2.8,
+    "carbs_g": 81.5,
+    "fiber_g": 3.0
+  }
+]

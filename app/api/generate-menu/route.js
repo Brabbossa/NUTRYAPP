@@ -1,4 +1,5 @@
 import Groq from 'groq-sdk';
+import { batchSearchFoods } from '../../lib/searchFood.js';
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
@@ -18,72 +19,118 @@ export async function POST(req) {
 L'utente ha esplicitamente indicato nel campo Allergie/Esclusioni: "${profile.allergies || 'Nessuna'}".
 QUESTA REGOLA SOVRASCRIVE QUALSIASI ALTRA LOGICA. 
 - Se l'utente scrive "proteine solo da uova e legumi", NON DEVI INSERIRE CARNE, NON DEVI INSERIRE TOFU, NON DEVI INSERIRE PESCE, NON DEVI INSERIRE YOGURT o SIERO (WHEY) a meno che non li tolleri. Solo uova e legumi. 
-- Se ci sono cibi odiati o intolleranze, escludili spietatamente anche dalla lista della spesa.
-- ATTENZIONE: Gli ingredienti che trovi nell'esempio JSON in basso (es. Avena, Proteine siero, Pollo) SONO SOLO ESEMPI DI FORMATTAZIONE. NON copiarli se contravvengono alle regole o ai divieti dell'utente!`;
+- Se ci sono cibi odiati o intolleranze, escludili spietatamente.
+`;
     
     if (voiceModification) {
-      extraInstruction += `\n[MODIFICA VOCALE UTENTE]: L'utente ha appena richiesto: "${voiceModification}". Riadatta l'intero menù rispettando AL 100% questa richiesta.\n`;
+      extraInstruction += `\n[MODIFICA VOCALE UTENTE]: L'utente ha appena richiesto: "${voiceModification}". Riadatta la scelta degli ingredienti rispettando AL 100% questa richiesta.\n`;
     }
 
-    const prompt = `Sei un Nutrizionista Clinico Sportivo AI letale, preciso e analitico ("Synapse Professional Clinic"). 
-Il tuo calcolo deve essere IMPECCABILE. Devi generare un piano alimentare settimanale per un utente incrociando questi esatti e rigidissimi parametri anamnestici:
+    const basePrompt = `Sei un Nutrizionista Clinico Sportivo AI letale, preciso e analitico ("Synapse Professional Clinic"). 
+Devi pianificare gli INGREDIENTI per un menù settimanale (5 pasti al giorno) basato sui seguenti parametri:
 
-1. DATI BIOMETRICI E OBIETTIVO:
-- Dati Base: ${profile.gender}, ${profile.age} anni, Peso: ${profile.weight}kg, Altezza: ${profile.height}cm, % Grasso Stimata: ${profile.body_fat}%
-- Obiettivo Fisico PRINCIPALE: ${profile.goal}
-- Fabbisogno Calorico (TDEE): ${profile.tdee} kcal/giorno.
+1. Dati Biometrici: ${profile.gender}, ${profile.age} anni, Peso: ${profile.weight}kg, Altezza: ${profile.height}cm, % Grasso Stimata: ${profile.body_fat}%
+2. Obiettivo: ${profile.goal}. Fabbisogno Calorico: ${profile.tdee} kcal/giorno.
+3. Allergie e Divieti: ${profile.allergies || 'Nessuna'}. ${extraInstruction}
 
-2. TARGET MACRONUTRIENTI (bilanciati su 5 pasti al giorno):
-- Proteine Max: ~${profile.protein_target || 150}g/pasto
-- Zuccheri Max: ${profile.sugar_limit || 50}g/giorno
+PASSO 1: Analizza le regole e decidi quali ingredienti ti servono per l'intera settimana.
+DEVI CHIAMARE IL TOOL 'search_crea_database' passandogli un array di TUTTI i nomi degli ingredienti che intendi usare (almeno 15-20 ingredienti diversi come 'Petto di pollo', 'Riso Basmati', 'Avena', 'Mandorle', 'Mela', 'Olio extravergine di oliva').
+Non emettere nient'altro, chiama solo il tool!`;
 
-3. SCELTE ALIMENTARI E DIVIETI:
-- Indirizzo Dieta: ${profile.diet_type || 'Generica'}.
-- Pasti Fuori Casa: "${profile.meals_out}".
-- Integrazione: "${profile.supplements || 'Nessuna'}". 
-- Infortuni o Limitazioni: "${profile.injuries || 'Nessuna'}".
-${extraInstruction}
+    const tools = [
+      {
+        type: "function",
+        function: {
+          name: "search_crea_database",
+          description: "Cerca un elenco di cibi nel database nutrizionale italiano CREA per ottenerne macro e calorie esatti per 100g.",
+          parameters: {
+            type: "object",
+            properties: {
+              queries: {
+                type: "array",
+                items: { type: "string" },
+                description: "Elenco dei nomi di cibi base da inserire nella dieta (es. ['Petto di pollo', 'Riso Basmati', 'Avena', 'Olio extravergine di oliva'])"
+              }
+            },
+            required: ["queries"]
+          }
+        }
+      }
+    ];
 
-4. TIMING METABOLICO E PRE/POST ALLENAMENTO (FONDAMENTALE):
-- Orari dei Pasti dell'utente: ${mealSchedule}.
-- Orario del Workout: ${workoutTimeStr}.
-- COMPRENDI: Calcola quale pasto cade PRIMA e quale DOPO il workout, adattando le fonti di carboidrati e indicandolo nel "titolo".
+    const messages = [
+      { role: "user", content: basePrompt }
+    ];
 
-REGOLE DI OUTPUT JSON (Nessuna tolleranza all'errore):
-1. DEVI SCRIVERE UN ARRAY (lista []) PER I PASTI DI OGNI GIORNO E UN ARRAY PER LA LISTA_SPESA in puro formato JSON. Nessun backtick Markdown fuori dalle graffe.
-2. OBBLIGO DEI 5 PASTI: "Colazione", "Spuntino 1", "Pranzo", "Spuntino 2", "Cena".
-3. L'Esempio JSON qui sotto usa cibi standard (es. Proteine siero, Lamponi). SE L'UTENTE HA VIETATO IL LATTOSIO O HA CHIESTO SOLO UOVA/LEGUMI, IGNORA L'ESEMPIO E USA CIBI COERENTI ALLE SUE REGOLE. NON USARE CIBI VIETATI.
-4. Ogni "istruzioni" deve essere un Array di Stringhe.
+    // --- TURN 1: Force Tool Calling ---
+    const toolCallCompletion = await groq.chat.completions.create({
+      messages: messages,
+      model: "llama-3.3-70b-versatile",
+      tools: tools,
+      tool_choice: { type: "function", function: { name: "search_crea_database" } },
+      temperature: 0.1,
+      max_tokens: 1500
+    });
 
-Esempio Struttura ESATTA da replicare stringa per stringa (Sostituisci i cibi con quelli ammessi):
+    const assistantMsg = toolCallCompletion.choices[0].message;
+    messages.push(assistantMsg);
+
+    let dbResult = [];
+    if (assistantMsg.tool_calls && assistantMsg.tool_calls.length > 0) {
+      const toolCall = assistantMsg.tool_calls[0];
+      const args = JSON.parse(toolCall.function.arguments);
+      console.log("[GROQ] Ingredienti richiesti dall'AI:", args.queries);
+      
+      // Esegui la ricerca nel DB locale!
+      dbResult = batchSearchFoods(args.queries);
+      console.log("[GROQ] Trovati nel DB:", dbResult.filter(r => !r.error).map(r => r.name));
+
+      messages.push({
+        role: "tool",
+        tool_call_id: toolCall.id,
+        name: toolCall.function.name,
+        content: JSON.stringify(dbResult)
+      });
+    }
+
+    // --- TURN 2: Final JSON Generation ---
+    const finalPrompt = `Ottimo. Ora hai i valori nutrizionali ESATTI PER 100g dei cibi disponibili nel database.
+ATTENZIONE: Se per un ingrediente c'è scritto 'NON_TROVATO', NON PUOI USARLO. Devi ripiegare su altri cibi trovati o comuni (es. 'Petto di pollo' invece di 'Pollo ruspante').
+
+ORA, DEVI RISPONDERE IN PURO FORMATO JSON. Nessun backtick fuori dalle graffe.
+Il tuo calcolo matematico deve essere perfetto. Se usi 50g di avena, i macros sono (Valore per 100g) / 2.
+Distribuisci su 7 giorni (Lunedì-Domenica), 5 pasti al giorno: "Colazione", "Spuntino 1", "Pranzo", "Spuntino 2", "Cena".
+
+Struttura JSON ESATTA richiesta:
 {
   "menu": {
     "Lunedì": [
-      { "nome_pasto": "Colazione", "titolo": "Nome Ricetta Coerente con Regole", "ingredienti": "IngredienteA 50g, IngredienteB 30g", "istruzioni": ["Step 1.", "Step 2."], "pro": 35, "cho": 40, "fat": 12, "zuccheri": 5 },
-      { "nome_pasto": "Spuntino 1", "titolo": "...", "ingredienti": "...", "istruzioni": [...], "pro": 15, "cho": 20, "fat": 5, "zuccheri": 2 }
-    ],
-... tutti i 7 giorni ...
+      { "nome_pasto": "Colazione", "titolo": "Porridge di Avena", "ingredienti": "Fiocchi d'avena 50g, Latte 150ml", "istruzioni": ["Mischia.", "Scalda."], "pro": 12, "cho": 35, "fat": 5, "zuccheri": 5 },
+      { "nome_pasto": "Spuntino 1", "titolo": "Mela", "ingredienti": "Mela, con buccia 150g", "istruzioni": ["Taglia a fette."], "pro": 0.5, "cho": 20, "fat": 0.3, "zuccheri": 18 }
+    ]
   },
   "lista_spesa": [
-    { "categoria": "Cereali & Farinacei", "items": ["Riso 1kg", "Farro 400g"] },
-... tutte le categorie...
+    { "categoria": "Cereali & Farinacei", "items": ["Fiocchi d'avena 500g"] }
   ]
 }`;
 
-    const completion = await groq.chat.completions.create({
-      messages: [{ role: "user", content: prompt }],
+    messages.push({ role: "system", content: finalPrompt });
+
+    const finalCompletion = await groq.chat.completions.create({
+      messages: messages,
       model: "llama-3.3-70b-versatile",
       response_format: { type: "json_object" },
       temperature: 0.1,
       max_tokens: 16000
     });
     
-    const resultText = completion.choices[0].message.content;
+    const resultText = finalCompletion.choices[0].message.content;
     const menuData = JSON.parse(resultText);
 
     return Response.json(menuData);
   } catch (error) {
-    console.error("Groq Generate Menu Error:", error.message || error);
+    console.error("Groq Generate Menu ToolCall Error:", error.message || error);
     return Response.json({ error: "Errore Groq: " + (error.message || "Sconosciuto") }, { status: 500 });
   }
 }
+
