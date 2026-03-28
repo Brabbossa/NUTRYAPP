@@ -8,11 +8,20 @@
 }
 
 @layer base {
+  :root {
+    color-scheme: dark;
+  }
+  
   body {
     background-color: var(--color-dark);
     color: #ffffff;
     font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
+  }
+
+  select option {
+    background-color: #111111;
+    color: #ffffff;
   }
 }
 
