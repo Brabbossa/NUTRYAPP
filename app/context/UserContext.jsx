@@ -109,10 +109,13 @@ export function UserProvider({ children }) {
       }
       if (data) {
         // Formatta campi snake_case a camelCase dove serve o mantienili
-        // Filtriamo i valori null per evitare che sovrascrivano il defaultProfile
+        // Mappiamo i null a stringa vuota per non craschare gli input controllati, e non li scartiamo più
         const cleanData = Object.fromEntries(
-          Object.entries(data).filter(([_, v]) => v !== null && v !== undefined)
+          Object.entries(data).filter(([_, v]) => v !== undefined)
         );
+        Object.keys(cleanData).forEach(k => {
+          if (cleanData[k] === null) cleanData[k] = '';
+        });
         setProfile({ ...defaultProfile, ...cleanData });
       } else {
         // Inserisci default se non c'è
@@ -139,6 +142,11 @@ export function UserProvider({ children }) {
       const toSave = { ...newProfile };
       delete toSave.id; // Non sovrascrivere la PK
       
+      // Mappa stringhe vuote a null per evitare errori Supabase su campi numerici
+      Object.keys(toSave).forEach(key => {
+        if (toSave[key] === '') toSave[key] = null;
+      });
+
       const { error } = await supabase
         .from('profiles')
         .update(toSave)

@@ -17,7 +17,13 @@ function parseSerie(serie) {
   return match ? parseInt(match[1]) : 3
 }
 
-// TTS functionality moved into the component to handle Autoplay safely
+// Estimate active time based on reps (approx 4 seconds per rep + 5 sec buffer)
+function estimateActiveTime(ripetizioni) {
+  if (!ripetizioni) return 45
+  const match = String(ripetizioni).match(/(\d+)/)
+  const reps = match ? parseInt(match[1]) : 10
+  return (reps * 4) + 10 // added a little more buffer
+}
 
 // Timer phases
 const PHASE = {
@@ -26,8 +32,6 @@ const PHASE = {
   REST: 'rest',
   FINISHED: 'finished',
 }
-
-// Motivational engine moved to Groq API
 
 export function WorkoutTimer({ plan, onComplete }) {
   const [phase, setPhase] = useState(PHASE.IDLE)
@@ -60,7 +64,6 @@ export function WorkoutTimer({ plan, onComplete }) {
       const blob = await res.blob()
       const url = URL.createObjectURL(blob)
       
-      // Assicura riproduzione asincrona
       audioRef.current.src = url
       await audioRef.current.play()
     } catch (e) {
@@ -73,18 +76,15 @@ export function WorkoutTimer({ plan, onComplete }) {
   const totalSets = currentExercise ? parseSerie(currentExercise.serie) : 0
   const restDuration = currentExercise ? parseRecupero(currentExercise.recupero) : 60
   
-  // Ref for random motivation timeout
   const motivationTimeoutRef = useRef(null)
 
-  // Play fart sound
   const playFartSound = useCallback(() => {
     try {
-      const audio = new Audio('https://www.myinstants.com/media/sounds/fart-01.mp3') // Basic fart sound
+      const audio = new Audio('https://www.myinstants.com/media/sounds/fart-01.mp3')
       audio.volume = 1.0;
       audio.play().catch(e => console.log('Audio play failed', e))
     } catch(err) {}
   }, [])
-
 
   // Total elapsed timer
   useEffect(() => {
@@ -96,52 +96,103 @@ export function WorkoutTimer({ plan, onComplete }) {
     return () => clearInterval(elapsedRef.current)
   }, [phase, isPaused])
 
-  // Countdown timer for rest phases
+  // Countdown timer for automatic progression
   useEffect(() => {
-    if (phase === PHASE.REST && !isPaused && countdown > 0) {
+    if ((phase === PHASE.REST || phase === PHASE.EXERCISE) && !isPaused && countdown > 0) {
       intervalRef.current = setInterval(() => {
         setCountdown(prev => {
           if (prev <= 1) {
             clearInterval(intervalRef.current)
             return 0
           }
-          // Voice cues at key moments
-          if (prev === 11) voiceAnnounce('Dieci secondi alla fine della pausa')
-          if (prev === 4) voiceAnnounce('Tre, due, uno')
-          if (totalTime > 20 && prev === Math.floor(totalTime / 2)) {
-            voiceAnnounce('Forza Enrico! Cazzo daje uomo! Sei il più forte! Sbracali tutti!')
+          
+          if (phase === PHASE.REST) {
+            if (prev === 11) voiceAnnounce('Dieci secondi alla fine della pausa')
+            if (prev === 4) voiceAnnounce('Tre, due, uno')
+            if (totalTime > 20 && prev === Math.floor(totalTime / 2)) {
+              voiceAnnounce('Forza! Cazzo daje uomo! Sei il più forte! Sbracali tutti!')
+            }
+          } else if (phase === PHASE.EXERCISE) {
+            if (prev === 11) voiceAnnounce('Ultimi dieci secondi, non mollare!')
+            if (prev === 4) voiceAnnounce('Tre, due, uno, Stop!')
           }
+
           return prev - 1
         })
       }, 1000)
     }
     return () => clearInterval(intervalRef.current)
-  }, [phase, isPaused, countdown, voiceEnabled, totalTime])
+  }, [phase, isPaused, countdown, voiceEnabled, totalTime, voiceAnnounce])
 
-  // When rest countdown hits 0, move to next set/exercise
-  useEffect(() => {
-    if (phase === PHASE.REST && countdown === 0) {
-      goToNextSet()
+  // Complete current set → go to rest
+  const completeSet = useCallback(() => {
+    playFartSound()
+    const rest = restDuration
+    setCountdown(rest)
+    setTotalTime(rest)
+    setPhase(PHASE.REST)
+    voiceAnnounce(`Serie completata! Pausa di ${rest} secondi. Riposa.`)
+  }, [restDuration, playFartSound, voiceAnnounce])
+
+  // After rest → next set or next exercise
+  const goToNextSet = useCallback(() => {
+    playFartSound()
+    const nextSet = setIdx + 1
+    if (nextSet < totalSets) {
+      setSetIdx(nextSet)
+      setPhase(PHASE.EXERCISE)
+      const activeTime = estimateActiveTime(currentExercise?.ripetizioni)
+      setCountdown(activeTime)
+      setTotalTime(activeTime)
+      voiceAnnounce(`Via! ${currentExercise?.nome}, serie ${nextSet + 1} di ${totalSets}.`)
+    } else {
+      const nextEx = exerciseIdx + 1
+      if (nextEx < exercises.length) {
+        setExerciseIdx(nextEx)
+        setSetIdx(0)
+        setPhase(PHASE.EXERCISE)
+        const ex = exercises[nextEx]
+        const activeTime = estimateActiveTime(ex.ripetizioni)
+        setCountdown(activeTime)
+        setTotalTime(activeTime)
+        voiceAnnounce(`Prossimo esercizio: ${ex.nome}! Serie 1 di ${parseSerie(ex.serie)}. Vai!`)
+      } else {
+        setPhase(PHASE.FINISHED)
+        voiceAnnounce('Complimenti! Allenamento completato! Grande lavoro!')
+      }
     }
-  }, [phase, countdown])
+  }, [setIdx, totalSets, exerciseIdx, exercises, currentExercise, playFartSound, voiceAnnounce])
+
+  // When countdown hits 0, transition automatically
+  useEffect(() => {
+    if (countdown === 0) {
+      if (phase === PHASE.REST) {
+        goToNextSet()
+      } else if (phase === PHASE.EXERCISE) {
+        completeSet()
+      }
+    }
+  }, [countdown, phase, goToNextSet, completeSet])
 
   // Random motivation phrase during EXERCISE and REST phases
   useEffect(() => {
     if ((phase === PHASE.EXERCISE || phase === PHASE.REST) && !isPaused && voiceEnabled) {
       const scheduleNext = () => {
-        // Random tra 15 e 45 secondi
         const delay = Math.floor(Math.random() * (45000 - 15000 + 1)) + 15000;
         motivationTimeoutRef.current = setTimeout(async () => {
-          try {
-            const res = await fetch('/api/generate-insult', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ phase: phase.toLowerCase() })
-            })
-            const data = await res.json()
-            if (data.text) voiceAnnounce(data.text)
-          } catch(e) {}
-          scheduleNext() // Schedule the next one
+          // Non sovrascrivere i voice cue imminenti
+          if (countdown > 15) {
+            try {
+              const res = await fetch('/api/generate-insult', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ phase: phase.toLowerCase() })
+              })
+              const data = await res.json()
+              if (data.text) voiceAnnounce(data.text)
+            } catch(e) {}
+          }
+          scheduleNext()
         }, delay);
       };
       scheduleNext();
@@ -149,9 +200,7 @@ export function WorkoutTimer({ plan, onComplete }) {
     return () => {
       if (motivationTimeoutRef.current) clearTimeout(motivationTimeoutRef.current);
     };
-  }, [phase, isPaused, voiceEnabled])
-
-
+  }, [phase, isPaused, voiceEnabled, countdown, voiceAnnounce])
 
   // Start the workout
   const startWorkout = () => {
@@ -161,46 +210,16 @@ export function WorkoutTimer({ plan, onComplete }) {
     setSetIdx(0)
     setElapsed(0)
     setIsPaused(false)
+    
+    // Set active time for first exercise
+    const activeTime = estimateActiveTime(exercises[0].ripetizioni)
+    setCountdown(activeTime)
+    setTotalTime(activeTime)
+    
     voiceAnnounce(`Allenamento iniziato! Primo esercizio: ${exercises[0].nome}. Serie 1 di ${parseSerie(exercises[0].serie)}. Vai!`)
   }
 
-  // Complete current set → go to rest
-  const completeSet = () => {
-    playFartSound()
-    const rest = restDuration
-    setCountdown(rest)
-    setTotalTime(rest)
-    setPhase(PHASE.REST)
-    voiceAnnounce(`Serie completata! Pausa di ${rest} secondi. Riposa.`)
-  }
-
-  // After rest → next set or next exercise
-  const goToNextSet = () => {
-    playFartSound()
-    const nextSet = setIdx + 1
-    if (nextSet < totalSets) {
-      // Next set of same exercise
-      setSetIdx(nextSet)
-      setPhase(PHASE.EXERCISE)
-      voiceAnnounce(`Via! ${currentExercise.nome}, serie ${nextSet + 1} di ${totalSets}.`)
-    } else {
-      // Next exercise
-      const nextEx = exerciseIdx + 1
-      if (nextEx < exercises.length) {
-        setExerciseIdx(nextEx)
-        setSetIdx(0)
-        setPhase(PHASE.EXERCISE)
-        const ex = exercises[nextEx]
-        voiceAnnounce(`Prossimo esercizio: ${ex.nome}! Serie 1 di ${parseSerie(ex.serie)}. Vai!`)
-      } else {
-        // Workout finished
-        setPhase(PHASE.FINISHED)
-        voiceAnnounce('Complimenti! Allenamento completato! Grande lavoro!')
-      }
-    }
-  }
-
-  // Skip rest / skip to next exercise
+  // Skip phases manually
   const skipRest = () => {
     clearInterval(intervalRef.current)
     setCountdown(0)
@@ -232,9 +251,7 @@ export function WorkoutTimer({ plan, onComplete }) {
   }
 
   // Progress for the ring (0 to 1)
-  const progress = phase === PHASE.REST && totalTime > 0
-    ? (totalTime - countdown) / totalTime
-    : 0
+  const progress = totalTime > 0 ? (totalTime - countdown) / totalTime : 0
 
   // SVG ring params
   const radius = 90
@@ -250,10 +267,10 @@ export function WorkoutTimer({ plan, onComplete }) {
           className="group relative flex items-center gap-3 bg-[--color-primary] text-[--color-dark] font-bold text-lg px-8 py-4 rounded-2xl hover:shadow-[0_0_30px_rgba(0,255,65,0.3)] transition-all active:scale-95"
         >
           <Play size={24} fill="currentColor" />
-          <span>INIZIA ALLENAMENTO</span>
+          <span>INIZIA ALLENAMENTO AUTOMATICO</span>
           <div className="absolute inset-0 rounded-2xl bg-white/10 opacity-0 group-hover:opacity-100 transition" />
         </button>
-        <p className="text-gray-500 text-sm">{exercises.length} esercizi • Timer + Coaching Vocale AI</p>
+        <p className="text-gray-500 text-sm">{exercises.length} esercizi • Completamente Automatico</p>
       </div>
     )
   }
@@ -283,7 +300,7 @@ export function WorkoutTimer({ plan, onComplete }) {
       {/* Top bar */}
       <div className="flex items-center justify-between px-5 py-3 bg-[--color-dark] border-b border-[--color-muted]">
         <div className="flex items-center gap-3">
-          <span className="text-xs font-mono text-gray-500 bg-[--color-muted] px-2 py-1 rounded">
+          <span className="text-xs font-mono text-gray-500 bg-[--color-muted] px-2 py-1 rounded" title="Tempo Totale">
             ⏱ {formatTime(elapsed)}
           </span>
           <span className="text-xs text-gray-500">
@@ -334,42 +351,31 @@ export function WorkoutTimer({ plan, onComplete }) {
           </span>
         </div>
 
-        {/* Big Timer for Elapsed Time (only during EXERCISE) */}
-        {phase === PHASE.EXERCISE && (
-          <div className="my-6">
-            <div className="text-[5rem] md:text-[6rem] leading-none font-mono font-black text-[--color-primary] tracking-tighter drop-shadow-[0_0_15px_rgba(0,255,65,0.4)]">
-              {formatTime(elapsed)}
-            </div>
+        {/* Timer Ring (unified for both REST and EXERCISE) */}
+        <div className="relative my-4">
+          <svg width="200" height="200" viewBox="0 0 200 200" className="transform -rotate-90">
+            {/* Background ring */}
+            <circle cx="100" cy="100" r={radius} fill="none" stroke="var(--color-muted)" strokeWidth="8" />
+            {/* Progress ring */}
+            <circle
+              cx="100" cy="100" r={radius}
+              fill="none"
+              stroke={phase === PHASE.EXERCISE ? 'var(--color-primary)' : '#fbbf24'}
+              strokeWidth="8"
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={strokeDashoffset}
+              className="transition-all duration-1000 ease-linear"
+              style={{ filter: phase === PHASE.EXERCISE ? 'drop-shadow(0 0 8px rgba(0,255,65,0.4))' : 'drop-shadow(0 0 8px rgba(251,191,36,0.4))' }}
+            />
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className={`text-5xl font-mono font-bold tabular-nums ${phase === PHASE.EXERCISE ? 'text-[--color-primary]' : 'text-amber-400'}`}>
+              {formatTime(countdown)}
+            </span>
+            <span className="text-xs text-gray-400 mt-1 uppercase tracking-widest">{phase === PHASE.EXERCISE ? 'Rimasti' : 'Recupero'}</span>
           </div>
-        )}
-
-        {/* Timer Ring (only during REST) */}
-        {phase === PHASE.REST && (
-          <div className="relative my-4">
-            <svg width="200" height="200" viewBox="0 0 200 200" className="transform -rotate-90">
-              {/* Background ring */}
-              <circle cx="100" cy="100" r={radius} fill="none" stroke="var(--color-muted)" strokeWidth="8" />
-              {/* Progress ring */}
-              <circle
-                cx="100" cy="100" r={radius}
-                fill="none"
-                stroke="var(--color-primary)"
-                strokeWidth="8"
-                strokeLinecap="round"
-                strokeDasharray={circumference}
-                strokeDashoffset={strokeDashoffset}
-                className="transition-all duration-1000 ease-linear"
-                style={{ filter: 'drop-shadow(0 0 8px rgba(0,255,65,0.4))' }}
-              />
-            </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-5xl font-mono font-bold text-white tabular-nums">
-                {formatTime(countdown)}
-              </span>
-              <span className="text-xs text-gray-500 mt-1">recupero</span>
-            </div>
-          </div>
-        )}
+        </div>
 
         {/* Pause indicator */}
         {isPaused && (
@@ -383,33 +389,36 @@ export function WorkoutTimer({ plan, onComplete }) {
           {/* Pause / Resume */}
           <button
             onClick={togglePause}
-            className={`p-4 rounded-xl transition-all ${
+            className={`flex items-center gap-2 px-8 py-4 rounded-xl font-bold transition-all ${
               isPaused 
-                ? 'bg-[--color-primary] text-[--color-dark]' 
+                ? 'bg-[--color-primary] text-[--color-dark] shadow-[0_0_20px_rgba(0,255,65,0.2)]' 
                 : 'bg-[--color-muted] text-gray-300 hover:bg-gray-700'
             }`}
-            title={isPaused ? 'Riprendi' : 'Pausa'}
+            title={isPaused ? 'Riprendi Automatico' : 'Pausa'}
           >
-            {isPaused ? <Play size={22} fill="currentColor" /> : <Pause size={22} />}
+            {isPaused ? <Play size={20} fill="currentColor" /> : <Pause size={20} />}
+            {isPaused ? 'RIPRENDI' : 'PAUSA'}
           </button>
 
           {phase === PHASE.EXERCISE ? (
-            /* Complete Set */
+            /* Skip Set early */
             <button
-              onClick={completeSet}
+              onClick={skipRest}
               disabled={isPaused}
-              className="flex items-center gap-2 bg-[--color-primary] text-[--color-dark] font-bold px-8 py-4 rounded-xl hover:shadow-[0_0_20px_rgba(0,255,65,0.2)] transition-all active:scale-95 disabled:opacity-40"
+              className="px-6 py-4 rounded-xl text-gray-400 font-bold hover:text-white transition-all disabled:opacity-40"
+              title="Completa in anticipo"
             >
-              ✅ SERIE COMPLETATA
+              <SkipForward size={20} />
             </button>
           ) : (
             /* Skip Rest */
             <button
               onClick={skipRest}
               disabled={isPaused}
-              className="flex items-center gap-2 bg-amber-500/20 text-amber-400 border border-amber-500/30 font-bold px-6 py-4 rounded-xl hover:bg-amber-500/30 transition-all active:scale-95 disabled:opacity-40"
+              className="px-6 py-4 rounded-xl text-amber-400 font-bold hover:text-white transition-all disabled:opacity-40"
+              title="Salta Pausa"
             >
-              <SkipForward size={20} /> SALTA PAUSA
+              <SkipForward size={20} />
             </button>
           )}
         </div>
@@ -425,15 +434,20 @@ export function WorkoutTimer({ plan, onComplete }) {
         <div className="w-full mt-4 pt-4 border-t border-[--color-muted]">
           <p className="text-xs text-gray-600 mb-2 uppercase tracking-wider font-semibold">Prossimi</p>
           <div className="flex flex-col gap-1.5">
-            {exercises.slice(exerciseIdx + 1, exerciseIdx + 4).map((ex, i) => (
-              <div key={i} className="flex items-center justify-between text-sm text-gray-500">
-                <span>{exerciseIdx + 2 + i}. {ex.nome}</span>
-                <span className="font-mono text-xs">{ex.serie}×{ex.ripetizioni}</span>
-              </div>
-            ))}
-            {exerciseIdx >= exercises.length - 1 && (
-              <span className="text-xs text-gray-600 italic">Ultimo esercizio! 💪</span>
-            )}
+            {exercises.slice(exerciseIdx + (phase === PHASE.REST && setIdx === totalSets - 1 ? 1 : 0), exerciseIdx + 3).map((ex, i) => {
+              // Adjust preview logic depending on whether we are moving to next exercise soon
+              const effectiveIdx = exerciseIdx + (phase === PHASE.REST && setIdx === totalSets - 1 ? 1 : 0) + i;
+              if (effectiveIdx >= exercises.length) return null;
+              
+              const isPulsing = i === 0 && phase === PHASE.REST && setIdx === totalSets - 1;
+              
+              return (
+                <div key={i} className={`flex items-center justify-between text-sm ${isPulsing ? 'text-[--color-primary] animate-pulse' : 'text-gray-500'}`}>
+                  <span>{effectiveIdx + 1}. {exercises[effectiveIdx].nome}</span>
+                  <span className="font-mono text-xs">{exercises[effectiveIdx].serie}×{exercises[effectiveIdx].ripetizioni}</span>
+                </div>
+              )
+            })}
           </div>
         </div>
       </div>
