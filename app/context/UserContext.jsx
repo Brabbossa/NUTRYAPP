@@ -114,7 +114,13 @@ export function UserProvider({ children }) {
           Object.entries(data).filter(([_, v]) => v !== undefined)
         );
         Object.keys(cleanData).forEach(k => {
-          if (cleanData[k] === null) cleanData[k] = '';
+          if (cleanData[k] === null) {
+            if (defaultProfile[k] && typeof defaultProfile[k] === 'object') {
+              cleanData[k] = defaultProfile[k];
+            } else {
+              cleanData[k] = '';
+            }
+          }
         });
         setProfile({ ...defaultProfile, ...cleanData });
       } else {
@@ -142,9 +148,15 @@ export function UserProvider({ children }) {
       const toSave = { ...newProfile };
       delete toSave.id; // Non sovrascrivere la PK
       
+      const numericFields = ['weight', 'height', 'age', 'body_fat', 'tdee', 'protein_target', 'sugar_limit', 'water_target'];
+      
       // Mappa stringhe vuote a null per evitare errori Supabase su campi numerici
       Object.keys(toSave).forEach(key => {
-        if (toSave[key] === '') toSave[key] = null;
+        if (toSave[key] === '') {
+          toSave[key] = null;
+        } else if (numericFields.includes(key) && typeof toSave[key] === 'string') {
+          toSave[key] = toSave[key].replace(',', '.');
+        }
       });
 
       const { error } = await supabase
