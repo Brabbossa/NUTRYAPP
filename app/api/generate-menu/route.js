@@ -8,57 +8,67 @@ export async function POST(req) {
   try {
     const { profile, voiceModification } = await req.json();
     
-    let extraInstruction = `\nREGOLA SULLE ALLERGIE E PREFERENZE: L'utente ha indicato "${profile.allergies || 'Nessuna'}" come cibi da evitare/allergie. NON DEVI MAI includere ingredienti che violano questa regola.\n`;
+    // Formatting meal times cleanly
+    const t = profile.meal_times || {};
+    const mealSchedule = `Colazione: ${t.breakfast || '08:00'}, Spuntino 1: ${t.snack1 || '10:30'}, Pranzo: ${t.lunch || '13:00'}, Spuntino 2: ${t.snack2 || '16:30'}, Cena: ${t.dinner || '20:00'}`;
+    const workoutTimeStr = profile.workout_time || '18:00';
+    
+    let extraInstruction = `\nREGOLA SULLE ALLERGIE, INTOLLERANZE E CIBI ODIATI: L'utente ha esplicitamente indicato: "${profile.allergies || 'Nessuna'}". NON DEVI ASSOLUTAMENTE e in nessun caso inserire questi cibi. Se l'utente dice 'solo questo o quello' (es. proteine solo uova e legumi) devi rispettarlo testualmente!\n`;
+    
     if (voiceModification) {
-      extraInstruction += `\nREGOLA CRITICA DEFINITIVA (MODIFICA UTENTE): L'utente ha espresso questa precisa volontà per il menù: "${voiceModification}". DEVI rispettare questa richiesta AL 100%. Se chiede di evitare carne, usa solo alternative. Se chiede cibi specifici, usa solo quelli. ADATTATI COMPLETAMENTE ALLA RICHIESTA.\n`;
+      extraInstruction += `\nREGOLA CRITICA DEFINITIVA (MODIFICA VOCALE UTENTE): L'utente ha appena richiesto questa modifica o preferenza per questo menù: "${voiceModification}". Riadatta l'intero menù rispettando AL 100% questa richiesta. Ignora qualsiasi standard nutrizionale se va in conflitto con questa richiesta utente specifica.\n`;
     }
 
-    const prompt = `Sei un nutrizionista AI sportivo e Personal Trainer di altissimo livello ("Synapse Professional"). 
-Genera un piano alimentare settimanale (da Lunedì a Domenica) per un utente con questi parametri anamnestici:
+    const prompt = `Sei un Nutrizionista Clinico Sportivo AI letale, preciso e analitico ("Synapse Professional Clinic"). 
+Il tuo calcolo deve essere IMPECCABILE. Devi generare un piano alimentare settimanale per un utente incrociando questi esatti e rigidissimi parametri anamnestici:
+
+1. DATI BIOMETRICI E OBIETTIVO:
 - Dati Base: ${profile.gender}, ${profile.age} anni, Peso: ${profile.weight}kg, Altezza: ${profile.height}cm, % Grasso Stimata: ${profile.body_fat}%
-- Misure (se inserite): Petto ${profile.chest_cm}cm, Vita ${profile.waist_cm}cm, Fianchi ${profile.hips_cm}cm, Cosce ${profile.thighs_cm}cm
-- Livello Attività (NEAT): ${profile.activity_level} / Lavoro: ${profile.work_type}
 - Obiettivo Fisico PRINCIPALE: ${profile.goal}
-- Fabbisogno Calorico (TDEE): ${profile.tdee} kcal/giorno
-- Esperienza Allenamento: ${profile.training_experience}
-- Target Nutrizionali: Tetto Proteine ~${profile.protein_target || 150}g/pasto, Zuccheri Max ${profile.sugar_limit || 50}g/gg, Acqua: ${profile.water_target || 2.5}L/gg
-- Dieta: ${profile.diet_type || 'Generica'}, Allergie/Odiati: ${profile.allergies || 'Nessuna'}
-- Pasti fuori casa consentiti: ${profile.meals_out}. Piano Integrazione: ${profile.supplements || 'Nessuna'}
+- Fabbisogno Calorico Giornaliero Calcolato (TDEE): ${profile.tdee} kcal/giorno. TUTTI i giorni devono avere un totale calorico in linea con il TDEE e l'obiettivo.
+
+2. TARGET MACRONUTRIENTI (da sommare e bilanciare rigorosamente):
+- Proteine: Tetto Massimo ~${profile.protein_target || 150}g/pasto (Dividile intelligentemente ma mantienile alte, specialmente post-workout).
+- Zuccheri Max: ${profile.sugar_limit || 50}g/giorno (Controlla le quote dei carboidrati semplici).
+
+3. SCELTE ALIMENTARI E DIVIETI:
+- Indirizzo Dieta: ${profile.diet_type || 'Generica'}.
+- Pasti Fuori Casa: L'utente dichiara "${profile.meals_out}". (Se mangia fuori 1-2 volte a settimana, etichetta uno o due pasti nel fine settimana come "Pasto Libero / Fuori Casa").
+- Integrazione: "${profile.supplements || 'Nessuna'}". (Delinea quando assumere questi integratori nei pasti).
+- Infortuni o Limitazioni: "${profile.injuries || 'Nessuna'}". Se presenti patologie o infortuni articolari, INSERISCI SPONTANEAMENTE alimenti anti-infiammatori (omega 3, zenzero, curcuma, frutti rossi).
 ${extraInstruction}
 
-REGOLE FONDAMENTALI:
-1. DEVI SCRIVERE UN ARRAY (lista []) PER I PASTI DI OGNI GIORNO E UN ARRAY PER LA LISTA_SPESA.
-2. OBBLIGO DEI 5 PASTI: Per OGNI GIORNO genera ESATTAMENTE 5 pasti: "Colazione", "Spuntino 1", "Pranzo", "Spuntino 2", "Cena". Totale: 35 pasti. Nessuna eccezione.
-3. NESSUNA ABBREVIAZIONE: DEVI stampare l'intero JSON per ogni giorno e tutta l'intera lista della spesa.
-4. ESTREMA VARIETÀ E GUSTO: Alterna fonti proteiche e carboidrati. Usa spezie ed erbe aromatiche.
-5. ISTRUZIONI E SPESA: Il campo "istruzioni" DEVE essere un ARRAY DI STRINGHE con step numerati. Crea anche, esternamente al "menu", un campo "lista_spesa" che aggrega TUTTI gli ingredienti necessari per i 7 giorni, divisi per categorie.
+4. TIMING METABOLICO E PRE/POST ALLENAMENTO (FONDAMENTALE):
+- Orari dei Pasti dell'utente: ${mealSchedule}.
+- Orario del Workout: ${workoutTimeStr}.
+- COMPRENDI: Calcola matematicamente quale di questi pasti è PRE-Workout (quello prima delle ${workoutTimeStr}) e quale è POST-Workout (quello dopo). Assicurati di allocare in proporzione più carboidrati veloci/medi attorno a queste finestre per la resintesi del glicogeno. Usa i grassi più lontano possibile dal workout.
 
-Rispondi SOLO con JSON. Struttura ESATTA da replicare:
+REGOLE DI OUTPUT JSON (Nessuna tolleranza all'errore):
+1. DEVI SCRIVERE UN ARRAY (lista []) PER I PASTI DI OGNI GIORNO E UN ARRAY PER LA LISTA_SPESA in puro formato JSON. Nessun backtick o markdown fuori dalle graffe interne.
+2. OBBLIGO DEI 5 PASTI ESATTI GIONALIERI: "Colazione", "Spuntino 1", "Pranzo", "Spuntino 2", "Cena", associativi per nome e orari utente.
+3. NESSUNA ABBREVIAZIONE, JSON VALIDO AL 100%. Calcola i Macro (pro, cho, fat, zuccheri in grammi come interi).
+4. La lista_spesa deve aggregare tutto. Le "istruzioni" di ogni pasto devono essere un Array di Stringhe. Se un pasto coincide con il Pre o Post workout, specificalo nel "titolo" (es: "Porridge Proteico (Pre-Workout)").
+
+Rispondi SOLO con JSON. Struttura ESATTA da replicare stringa per stringa:
 {
   "menu": {
     "Lunedì": [
-      { "nome_pasto": "Colazione", "titolo": "Porridge proteico ai frutti di bosco", "ingredienti": "Avena 50g, Proteine siero 30g, Lamponi 50g, Mandorle 10g", "istruzioni": ["Porta a ebollizione 200ml di acqua in un pentolino.", "Aggiungi 50g di fiocchi d'avena e cuoci a fuoco basso per 5 minuti mescolando spesso."], "pro": 35, "cho": 40, "fat": 12, "zuccheri": 5 },
-      { "nome_pasto": "Spuntino 1", "titolo": "...", "ingredienti": "...", "istruzioni": ["Step 1...", "Step 2..."], "pro": 15, "cho": 20, "fat": 5, "zuccheri": 2 }
+      { "nome_pasto": "Colazione", "titolo": "Porridge proteico ai frutti di bosco", "ingredienti": "Avena 50g, Proteine siero 30g, Lamponi 50g, Mandorle 10g", "istruzioni": ["Porta a ebollizione 200ml di acqua in un pentolino.", "Aggiungi 50g di avena e cuoci."], "pro": 35, "cho": 40, "fat": 12, "zuccheri": 5 },
+      { "nome_pasto": "Spuntino 1", "titolo": "...", "ingredienti": "...", "istruzioni": [...], "pro": 15, "cho": 20, "fat": 5, "zuccheri": 2 }
     ],
-    "Martedì": [ ... ],
-    "Mercoledì": [ ... ],
-    "Giovedì": [ ... ],
-    "Venerdì": [ ... ],
-    "Sabato": [ ... ],
-    "Domenica": [ ... ]
+... tutti i 7 giorni ...
   },
   "lista_spesa": [
     { "categoria": "Cereali & Farinacei", "items": ["Avena 500g", "Riso Basmati 1kg", "Pane Integrale 400g"] },
-    { "categoria": "Proteine Animali/Vegetali", "items": ["Petto di pollo 1.5kg", "Salmone 500g", "Tofu 400g"] },
-    { "categoria": "Frutta & Verdura", "items": ["Banane 1kg", "Zucchine 2kg", "Spinaci 500g"] },
-    { "categoria": "Grassi & Condimenti", "items": ["Olio EVO 1 bottiglia", "Burro d'arachidi 1 vasetto", "Mandorle 200g"] }
+... tutte le categorie...
   ]
 }`;
 
     const completion = await groq.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
-      model: "llama-3.1-8b-instant",
+      model: "llama-3.3-70b-versatile",
       response_format: { type: "json_object" },
+      temperature: 0.1,
       max_tokens: 16000
     });
     
