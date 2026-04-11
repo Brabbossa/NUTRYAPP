@@ -10,7 +10,7 @@ export default function ReportPage() {
   const [loading, setLoading] = useState(false)
   const [reportHtml, setReportHtml] = useState(null)
   const [error, setError] = useState('')
-  const [stats, setStats] = useState({ meals: 0, workouts: 0 })
+  const [stats, setStats] = useState({ workouts: 0 })
 
   useEffect(() => {
     if (!user) return;
@@ -19,11 +19,6 @@ export default function ReportPage() {
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
       const isoDate = sevenDaysAgo.toISOString();
 
-      const { count: mealsCount } = await supabase
-        .from('meals_history')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .gte('created_at', isoDate);
 
       const { count: workoutsCount } = await supabase
         .from('workout_history')
@@ -31,7 +26,7 @@ export default function ReportPage() {
         .eq('user_id', user.id)
         .gte('created_at', isoDate);
 
-      setStats({ meals: mealsCount || 0, workouts: workoutsCount || 0 });
+      setStats({ workouts: workoutsCount || 0 });
     }
     fetchStats();
   }, [user]);
@@ -45,13 +40,13 @@ export default function ReportPage() {
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
       const isoDate = sevenDaysAgo.toISOString();
 
-      const { data: meals } = await supabase.from('meals_history').select('*').eq('user_id', user.id).gte('created_at', isoDate);
+
       const { data: workouts } = await supabase.from('workout_history').select('*').eq('user_id', user.id).gte('created_at', isoDate);
 
       const res = await fetch('/api/generate-report', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ profile, workouts, meals })
+        body: JSON.stringify({ profile, workouts })
       });
 
       const data = await res.json();
@@ -81,11 +76,7 @@ export default function ReportPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="bg-white/[0.03] backdrop-blur-2xl border border-white/[0.05] p-6 rounded-[24px] flex flex-col items-center justify-center text-center shadow-[0_4px_24px_rgba(0,0,0,0.2)]">
-          <span className="text-4xl font-black text-white">{stats.meals}</span>
-          <span className="text-sm text-gray-400 font-bold uppercase tracking-wider mt-1">Pasti Completati</span>
-        </div>
+      <div className="grid grid-cols-1 gap-4">
         <div className="bg-white/[0.03] backdrop-blur-2xl border border-white/[0.05] p-6 rounded-[24px] flex flex-col items-center justify-center text-center shadow-[0_4px_24px_rgba(0,0,0,0.2)]">
           <span className="text-4xl font-black text-white group-hover:text-[--color-primary] transition-colors">{stats.workouts}</span>
           <span className="text-sm text-gray-400 font-bold uppercase tracking-wider mt-1">Workout Fatti</span>
@@ -102,7 +93,7 @@ export default function ReportPage() {
         <div className="flex flex-col items-center justify-center p-12 bg-white/[0.03] backdrop-blur-2xl border border-white/[0.05] rounded-[24px] shadow-[0_4px_24px_rgba(0,0,0,0.2)]">
           <Activity className="text-[--color-primary] animate-pulse mb-4" size={48} />
           <h3 className="text-lg font-black text-white mb-2">Calcolo Diagnosi in Corso...</h3>
-          <p className="text-sm text-gray-400 text-center max-w-sm">Synapse sta analizzando ogni grammo di macro e l'RPE dei tuoi ultimi 7 giorni per formulare una diagnosi brutale ma necessaria.</p>
+          <p className="text-sm text-gray-400 text-center max-w-sm">Synapse sta analizzando i volumi e l'RPE dei tuoi ultimi 7 giorni per formulare una diagnosi brutale ma necessaria.</p>
         </div>
       )}
 

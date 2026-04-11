@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Utensils, Dumbbell, Settings, Home, Menu, X } from 'lucide-react'
+import { Dumbbell, Settings, Home, Menu, X } from 'lucide-react'
 
 export function Sidebar() {
   const [isOpen, setIsOpen] = useState(false)
@@ -12,7 +12,6 @@ export function Sidebar() {
   const links = [
     { href: '/preferences', label: 'Preferences', icon: Settings },
     { href: '/', label: 'Dashboard', icon: Home },
-    { href: '/menu', label: 'Menù Settimanale', icon: Utensils },
     { href: '/workout', label: 'Workout Periodizzato', icon: Dumbbell },
     { href: '/report', label: 'Synapse Clinic Report', icon: Settings },
   ]
@@ -31,7 +30,7 @@ export function Sidebar() {
 
       <aside className={`fixed inset-y-0 left-0 z-40 w-64 bg-dark border-r border-muted transform transition-transform duration-300 md:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-6">
-          <h1 className="text-2xl font-bold tracking-tighter text-white uppercase">Eat & <span className="text-primary block">Fit</span></h1>
+          <h1 className="text-2xl font-bold tracking-tighter text-white uppercase">Cazziatone <span className="text-primary block">Gym</span></h1>
         </div>
         
         <nav className="mt-6 flex flex-col gap-2 px-4">

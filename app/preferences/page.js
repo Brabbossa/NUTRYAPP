@@ -32,25 +32,9 @@ export default function PreferencesPage() {
     }
   }
 
-  const calculateTDEE = (data) => {
-    const { weight, height, age, activity_level, gender } = data
-    // Uomo: (10 × peso) + (6.25 × altezza) - (5 × età) + 5
-    // Donna: (10 × peso) + (6.25 × altezza) - (5 × età) - 161
-    let bmr = (10 * weight) + (6.25 * height) - (5 * age)
-    bmr += (gender === 'Donna' ? -161 : 5)
-
-    const multipliers = {
-      'Sedentario': 1.2, 'Leggero': 1.375, 'Moderato': 1.55,
-      'Attivo': 1.725, 'Atleta': 1.9
-    }
-    return Math.round(bmr * (multipliers[activity_level] || 1.55))
-  }
-
   const handleSave = () => {
-    const tdee = calculateTDEE(formData)
-    const updated = { ...formData, tdee }
-    updateProfile(updated)
-    setToast('Preferenze Salvate! TDEE Aggiornato.')
+    updateProfile(formData)
+    setToast('Preferenze Salvate con successo!')
     setTimeout(() => setToast(''), 3000)
   }
 
@@ -81,13 +65,8 @@ export default function PreferencesPage() {
     const now = new Date()
     const todayStr = now.toISOString().split('T')[0]
 
-    // Build notification schedule from meal_times + workout_time
+    // Build notification schedule from workout_time
     const schedule = [
-      { key: 'breakfast', label: '🥣 Colazione', time: formData.meal_times?.breakfast || '08:00' },
-      { key: 'snack1', label: '🍎 Spuntino 1', time: formData.meal_times?.snack1 || '10:30' },
-      { key: 'lunch', label: '🍝 Pranzo', time: formData.meal_times?.lunch || '13:00' },
-      { key: 'snack2', label: '🥜 Spuntino 2', time: formData.meal_times?.snack2 || '16:30' },
-      { key: 'dinner', label: '🥩 Cena', time: formData.meal_times?.dinner || '20:00' },
       { key: 'workout', label: '💪 WORKOUT TIME', time: formData.workout_time || '18:00' },
     ]
 
@@ -103,9 +82,7 @@ export default function PreferencesPage() {
         registration.active.postMessage({
           type: 'SCHEDULE_NOTIFICATION',
           title: item.label,
-          body: item.key === 'workout'
-            ? 'È ora di spaccare ferro! Apri Synapse e inizia il workout.'
-            : `È ora di mangiare! Apri Synapse per la tua ricetta.`,
+          body: 'È ora di spaccare ferro! Apri Synapse e inizia il workout.',
           delay,
           tag: `synapse-${item.key}`
         })
@@ -202,7 +179,6 @@ ${events}END:VCALENDAR`
           I dati che inserisci qui sono fondamentali. <strong>Synapse Professional</strong> (la nostra AI) li utilizzerà come core per calcolare ogni tuo risultato:
         </p>
         <ul className="text-sm text-gray-400 list-disc pl-5 space-y-2">
-          <li><strong>Menù Settimanale:</strong> Le grammature di ogni singolo piatto verranno calcolate matematicamente per rispettare il tuo TDEE e i tuoi target di proteine e zuccheri in base a peso, altezza ed età. Qualsiasi allergia verrà evitata rigorosamente.</li>
           <li><strong>Workout Periodizzato:</strong> L'esperienza, l'età e il livello di attività determineranno il volume (serie e ripetizioni) e i tempi di recupero ideali. Inoltre, i parametri RPE dei tuoi allenamenti passati calibreranno il sovraccarico progressivo.</li>
         </ul>
         <p className="text-sm text-primary mt-3 font-semibold">📍 Più sei preciso in questa pagina, più estremi saranno i tuoi risultati muscolari.</p>
@@ -340,95 +316,15 @@ ${events}END:VCALENDAR`
           </div>
         </div>
 
-        <div className="pt-4 border-t border-white/10 bg-black/30 rounded-xl p-5 flex items-center justify-between mt-4">
-          <div>
-            <p className="text-sm text-gray-400">TDEE Stimato (Fabbisogno Calorico Giornaliero)</p>
-            <p className="text-xs text-gray-500">Usalo per calibrare i target di macronutrienti qui sotto.</p>
-          </div>
-          <p className="text-3xl font-black text-[--color-primary]">{formData.tdee} <span className="text-lg text-gray-400 font-normal">kcal/gg</span></p>
-        </div>
-      </section>
-
-      {/* Target Nutrizionali & Restrizioni */}
-      <section className="bg-white/[0.03] backdrop-blur-2xl border border-white/[0.05] shadow-[0_4px_24px_rgba(0,0,0,0.2)] p-8 rounded-[24px] space-y-6">
-        <div className="flex items-center gap-2 border-b border-white/10 pb-4 mb-4">
-          <h2 className="text-xl font-black text-white">Target Nutrizionali & Abitudini</h2>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
-            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Proteine Tetto Max (g/pasto)</label>
-            <input type="number" name="protein_target" value={formData.protein_target} onChange={handleChange} className={inputClass} />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Zuccheri Tetto Max (g/giorno)</label>
-            <input type="number" name="sugar_limit" value={formData.sugar_limit} onChange={handleChange} className={inputClass} />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Acqua Target (Litri/giorno)</label>
-            <input type="number" step="0.1" name="water_target" value={formData.water_target || 2.5} onChange={handleChange} className={inputClass} />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Tipo Dieta</label>
-            <select name="diet_type" value={formData.diet_type} onChange={handleChange} className={inputClass}>
-              <option value="Onnivoro">Flessibile / Onnivoro</option>
-              <option value="Vegetariano">Vegetariano</option>
-              <option value="Vegan">Vegano</option>
-              <option value="Keto">Cheto / Low-Carb</option>
-              <option value="Paleo">Paleo</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Pasti Fuori Casa / Settimana</label>
-            <select name="meals_out" value={formData.meals_out || 'Mai'} onChange={handleChange} className={inputClass}>
-              <option value="Mai">Quasi Mai (Preparazione 100% meal prep)</option>
-              <option value="1-2 a settimana">1-2 a settimana (Es. Sabato/Domenica)</option>
-              <option value="Spesso">Spesso (Lavoro/Mensa/Ristorante)</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Allergie / Intolleranze / Cibi Odiati</label>
-            <input type="text" name="allergies" value={formData.allergies} onChange={handleChange} placeholder="Es. Lattosio, Glutine, Broccoli, Tonno" className={inputClass} />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Piano Integrazione in Uso</label>
-            <input type="text" name="supplements" value={formData.supplements || ''} onChange={handleChange} placeholder="Es. Whey, Creatina 5g, Omega 3, Vit. D" className={inputClass} />
-          </div>
         </div>
       </section>
 
       {/* Orari Notifiche */}
       <section className="bg-white/[0.03] backdrop-blur-2xl border border-white/[0.05] shadow-[0_4px_24px_rgba(0,0,0,0.2)] p-8 rounded-[24px] space-y-6">
-        <h2 className="text-xl font-black text-white border-b border-white/10 pb-4">Orari Pasti & Workout</h2>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+        <h2 className="text-xl font-black text-white border-b border-white/10 pb-4">Orario Workout</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Colazione</label>
-            <input type="time" name="meal_times.breakfast" value={formData.meal_times?.breakfast || '08:00'} onChange={handleChange} className={inputClass} />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Spuntino 1</label>
-            <input type="time" name="meal_times.snack1" value={formData.meal_times?.snack1 || '10:30'} onChange={handleChange} className={inputClass} />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Pranzo</label>
-            <input type="time" name="meal_times.lunch" value={formData.meal_times?.lunch || '13:00'} onChange={handleChange} className={inputClass} />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Spuntino 2</label>
-            <input type="time" name="meal_times.snack2" value={formData.meal_times?.snack2 || '16:30'} onChange={handleChange} className={inputClass} />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-400 mb-2 font-bold uppercase tracking-wider text-[11px]">Cena</label>
-            <input type="time" name="meal_times.dinner" value={formData.meal_times?.dinner || '20:00'} onChange={handleChange} className={inputClass} />
-          </div>
-          <div>
-            <label className="block text-sm text-[--color-primary] mb-2 font-bold uppercase tracking-wider text-[11px]">🏋️ Workout</label>
+            <label className="block text-sm text-[--color-primary] mb-2 font-bold uppercase tracking-wider text-[11px]">🏋️ Avviso Workout Push</label>
             <input type="time" name="workout_time" value={formData.workout_time || '18:00'} onChange={handleChange} className={inputClass} />
           </div>
         </div>
@@ -446,7 +342,7 @@ ${events}END:VCALENDAR`
               <p className="font-bold text-white mb-1">🔔 Notifiche Push</p>
               <ul className="list-disc pl-5 space-y-1 text-gray-400">
                 <li>Clicca <strong className="text-white">"Attiva Notifiche"</strong> e concedi il permesso quando il browser te lo chiede.</li>
-                <li>Una volta attivate, clicca <strong className="text-white">"Programma Notifiche Oggi"</strong>: riceverai un avviso sul telefono ad ogni orario pasto (Colazione, Spuntini, Pranzo, Cena) e all'orario del Workout che hai impostato sopra.</li>
+                <li>Una volta attivate, clicca <strong className="text-white">"Programma Notifiche Oggi"</strong>: riceverai un avviso sul telefono all'orario del Workout che hai impostato.</li>
                 <li>Le notifiche funzionano anche con il telefono bloccato, a patto che l'app sia stata aperta almeno una volta oggi.</li>
                 <li><strong className="text-yellow-400">⚠️ iPhone:</strong> Per ricevere le notifiche su iPhone, devi prima aggiungere l'app alla Home Screen (Safari → Condividi → "Aggiungi alla schermata Home"). Solo da lì le notifiche PWA funzionano su iOS.</li>
               </ul>
@@ -517,7 +413,7 @@ ${events}END:VCALENDAR`
         <h2 className="text-xl font-semibold text-red-500 flex items-center gap-2">⚠️ Danger Zone</h2>
         <div className="bg-dark/50 p-5 rounded-xl border border-red-500/10">
           <h3 className="text-white font-bold mb-2">Reset Totale Dati</h3>
-          <p className="text-sm text-gray-400 mb-4">Questa azione eliminerà definitivamente tutto il tuo storico pasti, lo storico dei workout, i menù generati e riporterà il tuo profilo ai valori di default. L'azione è irreversibile.</p>
+          <p className="text-sm text-gray-400 mb-4">Questa azione eliminerà definitivamente tutto il tuo storico dei workout e riporterà l'app ai valori di default. L'azione è irreversibile.</p>
           
           <button
             onClick={async () => {

@@ -25,28 +25,12 @@ const defaultProfile = {
   workout_duration: '60 min',
   workout_frequency: '3 giorni/settimana',
   injuries: '',
-  tdee: 2500,
-  protein_target: 150,
-  sugar_limit: 50,
-  water_target: 2.5,
-  diet_type: 'Onnivoro',
-  allergies: '',
-  supplements: '',
-  meals_out: 'Mai',
-  meal_times: {
-    breakfast: '08:00',
-    snack1: '10:30',
-    lunch: '13:00',
-    snack2: '16:30',
-    dinner: '20:00'
-  },
   workout_time: '18:00'
 };
 
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(defaultProfile);
-  const [weeklyMenu, setWeeklyMenu] = useState(null);
   const [workoutHistory, setWorkoutHistory] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
@@ -83,18 +67,6 @@ export function UserProvider({ children }) {
 
     return () => subscription.unsubscribe();
   }, []);
-
-  // Sync menu to localstorage so it persists per device
-  useEffect(() => {
-    if (isLoaded) {
-      if (weeklyMenu) {
-        localStorage.setItem('synapse_menu', JSON.stringify(weeklyMenu));
-      } else {
-        const savedMenu = localStorage.getItem('synapse_menu');
-        if (savedMenu) setWeeklyMenu(JSON.parse(savedMenu));
-      }
-    }
-  }, [weeklyMenu, isLoaded]);
 
   const fetchProfile = async (userId) => {
     try {
@@ -148,7 +120,7 @@ export function UserProvider({ children }) {
       const toSave = { ...newProfile };
       delete toSave.id; // Non sovrascrivere la PK
       
-      const numericFields = ['weight', 'height', 'age', 'body_fat', 'tdee', 'protein_target', 'sugar_limit', 'water_target'];
+      const numericFields = ['weight', 'height', 'age', 'body_fat'];
       
       // Mappa stringhe vuote a null per evitare errori Supabase su campi numerici
       Object.keys(toSave).forEach(key => {
@@ -202,12 +174,6 @@ export function UserProvider({ children }) {
     if (!user) return;
     
     // 1. Reset DB: Delete all history for this user
-    const { error: errMeals } = await supabase.from('meals_history').delete().eq('user_id', user.id);
-    if (errMeals) {
-      console.error('Errore delete meals:', errMeals);
-      throw new Error('Impossibile cancellare i pasti: ' + errMeals.message);
-    }
-
     const { error: errWorkouts } = await supabase.from('workout_history').delete().eq('user_id', user.id);
     if (errWorkouts) {
       console.error('Errore delete workouts:', errWorkouts);
@@ -217,11 +183,10 @@ export function UserProvider({ children }) {
     // 2. Reset Profile to minimum defaults on DB
     const minProfile = {
       weight: null, height: null, age: null, body_fat: null,
-      tdee: null, protein_target: null, diet_type: 'Onnivoro', allergies: '',
       gender: 'Uomo', chest_cm: null, waist_cm: null, hips_cm: null, thighs_cm: null,
       work_type: 'Studente/Scrivania', training_experience: 'Intermedio', goal: 'Ipertrofia',
       equipment: 'Palestra Completa', workout_duration: '60 min', workout_frequency: '3 giorni/settimana',
-      injuries: null, water_target: 2.5, supplements: null, meals_out: 'Mai'
+      injuries: null
     };
     const { error: errProfile } = await supabase.from('profiles').update(minProfile).eq('id', user.id);
     if (errProfile) {
@@ -232,14 +197,11 @@ export function UserProvider({ children }) {
     // 3. Clear Local State
     setProfile(minProfile);
     setWorkoutHistory([]);
-    setWeeklyMenu(null);
-    localStorage.removeItem(`menu_${user.id}`);
   };
 
   return (
     <UserContext.Provider value={{ 
       user, profile, updateProfile, 
-      weeklyMenu, setWeeklyMenu, 
       workoutHistory, setWorkoutHistory, 
       saveWorkout, resetAllData,
       isGeneratingAI, triggerEasterEgg
