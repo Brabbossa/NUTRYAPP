@@ -17,12 +17,17 @@ function parseSerie(serie) {
   return match ? parseInt(match[1]) : 3
 }
 
-// Estimate active time based on reps (approx 4 seconds per rep + 5 sec buffer)
+// Estimate active time based on reps
 function estimateActiveTime(ripetizioni) {
-  if (!ripetizioni) return 45
+  if (!ripetizioni) return 35
   const match = String(ripetizioni).match(/(\d+)/)
   const reps = match ? parseInt(match[1]) : 10
-  return (reps * 4) + 10 // added a little more buffer
+  
+  // Se le reps sono elevate (es. 60), sono probabilmente secondi per isometria (Plank)
+  if (reps > 30) return reps + 5;
+  
+  // Una ripetizione media dura 3 sec. Aggiungiamo 5s di buffer.
+  return (reps * 3) + 5 
 }
 
 // Timer phases
@@ -178,10 +183,10 @@ export function WorkoutTimer({ plan, onComplete }) {
   useEffect(() => {
     if ((phase === PHASE.EXERCISE || phase === PHASE.REST) && !isPaused && voiceEnabled) {
       const scheduleNext = () => {
-        const delay = Math.floor(Math.random() * (45000 - 15000 + 1)) + 15000;
+        const delay = 10000; // Esattamente 10 secondi
         motivationTimeoutRef.current = setTimeout(async () => {
           // Non sovrascrivere i voice cue imminenti
-          if (countdown > 15) {
+          if (countdown > 5) {
             try {
               const res = await fetch('/api/generate-insult', {
                 method: 'POST',

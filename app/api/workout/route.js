@@ -42,7 +42,13 @@ Istruzioni per l'Output (SOLO JSON VALIDO):
   "nota_personale": "Breve nota motivazionale spiegando PERCHÈ hai creato questo workout (es. 'Considerando che hai 45 min e ti alleni a casa con manubri, ho inserito superset per...'). Massimo 3 frasi.",
   "avviso_sicurezza": "Se ci sono limitazioni (${profile.injuries || 'Nessuna'}), avvisa come prestare attenzione. Altrimenti lascia vuota ('').",
   "esercizi": [
-    { "nome": "Nome Esercizio (es. Piegamenti / Warm-up)", "serie": "3", "ripetizioni": "12", "recupero": "60s", "note_carico": "Consigli tecnici o di carico" }
+    { 
+      "nome": "Nome Esercizio (es. Piegamenti / Warm-up)", 
+      "serie": "3", 
+      "ripetizioni": "Specificare il numero di ripetizioni come intero o range (es. 10 oppure 8-12) SENZA USARE SECONDI (s) a meno che non sia isometria come il Plank (es. 60).", 
+      "recupero": "Usa tempi di recupero realistici e severi: es. 90-120s per esercizi multiarticolari (Squat, Panca), 60s per accessori base, 45s per pump/isolamento estremo.", 
+      "note_carico": "Consigli tecnici o di carico" 
+    }
   ]
 }`;
 
