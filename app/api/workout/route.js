@@ -43,10 +43,11 @@ Istruzioni per l'Output (SOLO JSON VALIDO):
   "avviso_sicurezza": "Se ci sono limitazioni (${profile.injuries || 'Nessuna'}), avvisa come prestare attenzione. Altrimenti lascia vuota ('').",
   "esercizi": [
     { 
-      "nome": "Nome Esercizio (es. Piegamenti / Warm-up)", 
+      "nome": "Nome Esercizio in Italiano (es. Piegamenti / Warm-up)", 
+      "nome_inglese": "Nome standard in INGLESE per database (es. Push-up, Squat, Deadlift, Preacher Curl)",
       "serie": "3", 
       "ripetizioni": "Specificare il numero di ripetizioni come intero o range (es. 10 oppure 8-12) SENZA USARE SECONDI (s) a meno che non sia isometria come il Plank (es. 60).", 
-      "recupero": "Usa tempi di recupero realistici e severi: es. 90-120s per esercizi multiarticolari (Squat, Panca), 60s per accessori base, 45s per pump/isolamento estremo.", 
+      "recupero": "OBBLIGATORIO: Usa tempi di recupero strettissimi! Tra i 30s e massimo 60s per gli esercizi principali, e 30s per gli accessori o pump. Niente riposi da due minuti.", 
       "note_carico": "Consigli tecnici o di carico" 
     }
   ]

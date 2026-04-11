@@ -17,17 +17,16 @@ function parseSerie(serie) {
   return match ? parseInt(match[1]) : 3
 }
 
-// Estimate active time based on reps
+// Estimate active time based on reps (MINIMUM 120s)
 function estimateActiveTime(ripetizioni) {
-  if (!ripetizioni) return 35
+  if (!ripetizioni) return 120
   const match = String(ripetizioni).match(/(\d+)/)
   const reps = match ? parseInt(match[1]) : 10
   
-  // Se le reps sono elevate (es. 60), sono probabilmente secondi per isometria (Plank)
-  if (reps > 30) return reps + 5;
+  if (reps >= 120) return reps; // Se l'utente deve stare in plank 5 min, usa 300 ecc.
   
-  // Una ripetizione media dura 3 sec. Aggiungiamo 5s di buffer.
-  return (reps * 3) + 5 
+  // Il minimo garantito di esecuzione diventa 120 secondi.
+  return Math.max(120, (reps * 3) + 5) 
 }
 
 // Timer phases
@@ -47,6 +46,8 @@ export function WorkoutTimer({ plan, onComplete }) {
   const [elapsed, setElapsed] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
   const [voiceEnabled, setVoiceEnabled] = useState(true)
+  const [imageUrl, setImageUrl] = useState(null)
+  const [imageError, setImageError] = useState(false)
   const intervalRef = useRef(null)
   const elapsedRef = useRef(null)
   const audioRef = useRef(null)
@@ -100,6 +101,45 @@ export function WorkoutTimer({ plan, onComplete }) {
     }
     return () => clearInterval(elapsedRef.current)
   }, [phase, isPaused])
+
+  // Fetch WGER image when exercise changes (only active phases)
+  useEffect(() => {
+    if (!currentExercise || phase === PHASE.IDLE || phase === PHASE.FINISHED) return;
+    
+    let isMounted = true;
+    setImageUrl(null);
+    setImageError(false);
+    
+    const fetchImage = async () => {
+      try {
+        // Usa il nome inglese se fornito dall'AI, o le prime due parole del nome italiano
+        const queryStr = currentExercise.nome_inglese || currentExercise.nome;
+        // Estrarre parola chiave per cercare un riscontro
+        const query = encodeURIComponent(queryStr.split(' ')[0]);
+        
+        // WGER DB usa l'inglese o stringhe generiche.
+        const res = await fetch(`https://wger.de/api/v2/exercise/search/?term=${query}&language=2`);
+        const data = await res.json();
+        
+        if (data.suggestions && data.suggestions.length > 0 && isMounted) {
+          const id = data.suggestions[0].data.base_id;
+          const imgRes = await fetch(`https://wger.de/api/v2/exerciseimage/?exercise_base=${id}`);
+          const imgData = await imgRes.json();
+          
+          if (imgData.results && imgData.results.length > 0 && isMounted) {
+            setImageUrl(imgData.results[0].image);
+            return;
+          }
+        }
+        if (isMounted) setImageError(true);
+      } catch (err) {
+        if (isMounted) setImageError(true);
+      }
+    };
+    
+    fetchImage();
+    return () => { isMounted = false; };
+  }, [currentExercise, phase]);
 
   // Countdown timer for automatic progression
   useEffect(() => {
@@ -183,7 +223,7 @@ export function WorkoutTimer({ plan, onComplete }) {
   useEffect(() => {
     if ((phase === PHASE.EXERCISE || phase === PHASE.REST) && !isPaused && voiceEnabled) {
       const scheduleNext = () => {
-        const delay = 10000; // Esattamente 10 secondi
+        const delay = Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000; // Tra 5 e 10 secondi esatti
         motivationTimeoutRef.current = setTimeout(async () => {
           // Non sovrascrivere i voice cue imminenti
           if (countdown > 5) {
@@ -345,6 +385,24 @@ export function WorkoutTimer({ plan, onComplete }) {
         <h2 className="text-2xl md:text-3xl font-bold text-white text-center leading-tight">
           {currentExercise?.nome}
         </h2>
+
+        {/* Immagine WGER o Fallback UI */}
+        <div className="w-full flex justify-center my-1 z-10 relative">
+          {imageUrl && !imageError ? (
+            <img 
+              src={imageUrl} 
+              alt={currentExercise?.nome} 
+              className="w-40 h-40 md:w-56 md:h-56 object-cover rounded-xl border border-white/10 shadow-[0_4px_30px_rgba(0,255,65,0.2)] bg-black/50" 
+            />
+          ) : (
+            <div className="w-40 h-40 md:w-56 md:h-56 rounded-[30px] border border-[--color-primary]/20 bg-gradient-to-br from-black/80 to-[--color-dark] flex flex-col items-center justify-center shadow-inner relative overflow-hidden text-center p-4">
+              <span className="text-5xl absolute opacity-5" style={{ filter: 'grayscale(1)' }}>💪</span>
+              <div className="w-20 h-20 mb-2 border-2 border-[--color-primary]/50 border-t-[--color-primary] rounded-full animate-spin"></div>
+              <span className="text-[10px] font-bold text-[--color-primary] uppercase tracking-wider relative z-10">AI SYNC</span>
+              <span className="text-[9px] text-gray-500 mt-1 relative z-10">VISUAL NON DISPONIBILE</span>
+            </div>
+          )}
+        </div>
 
         {/* Set info */}
         <div className="flex items-center gap-4 text-sm">
