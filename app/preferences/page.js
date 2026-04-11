@@ -316,7 +316,6 @@ ${events}END:VCALENDAR`
           </div>
         </div>
 
-        </div>
       </section>
 
       {/* Orari Notifiche */}
