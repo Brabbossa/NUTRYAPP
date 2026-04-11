@@ -4,6 +4,14 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { Play, Pause, SkipForward, X, Volume2, VolumeX, RotateCcw } from 'lucide-react'
 
 // Parse recupero string like "60-90" or "90" to seconds (takes the first number)
+const FALLBACK_IMAGES = [
+  "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=600&fit=crop", // Squat/Barbell
+  "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=600&fit=crop", // Dumbbells
+  "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?q=80&w=600&fit=crop", // Intense workout
+  "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=600&fit=crop", // Pushups/Ground
+  "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=600&fit=crop", // Plates
+];
+
 function parseRecupero(rec) {
   if (!rec) return 60
   const match = String(rec).match(/(\d+)/)
@@ -65,7 +73,7 @@ export function WorkoutTimer({ plan, onComplete }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text })
       })
-      if (!res.ok) throw new Error('TTS fallito')
+      if (!res.ok) throw new Error('TTS fallito o Quota Terminata')
       
       const blob = await res.blob()
       const url = URL.createObjectURL(blob)
@@ -73,7 +81,14 @@ export function WorkoutTimer({ plan, onComplete }) {
       audioRef.current.src = url
       await audioRef.current.play()
     } catch (e) {
-      console.error('Audio failed:', e)
+      console.warn('Audio backend failed, falling back to Web Speech API:', e)
+      if (window.speechSynthesis) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'it-IT';
+        utterance.rate = 1.1;
+        utterance.pitch = 0.6; // Voce più aggressiva
+        window.speechSynthesis.speak(utterance);
+      }
     }
   }, [voiceEnabled])
 
@@ -412,11 +427,16 @@ export function WorkoutTimer({ plan, onComplete }) {
               className="w-40 h-40 md:w-56 md:h-56 object-cover rounded-xl border border-white/10 shadow-[0_4px_30px_rgba(0,255,65,0.2)] bg-black/50" 
             />
           ) : (
-            <div className="w-40 h-40 md:w-56 md:h-56 rounded-[30px] border border-[--color-primary]/20 bg-gradient-to-br from-black/80 to-[--color-dark] flex flex-col items-center justify-center shadow-inner relative overflow-hidden text-center p-4">
-              <span className="text-5xl absolute opacity-5" style={{ filter: 'grayscale(1)' }}>💪</span>
-              <div className="w-20 h-20 mb-2 border-2 border-[--color-primary]/50 border-t-[--color-primary] rounded-full animate-spin"></div>
-              <span className="text-[10px] font-bold text-[--color-primary] uppercase tracking-wider relative z-10">AI SYNC</span>
-              <span className="text-[9px] text-gray-500 mt-1 relative z-10">VISUAL NON DISPONIBILE</span>
+            <div className="w-40 h-40 md:w-56 md:h-56 rounded-xl relative overflow-hidden flex items-center justify-center border border-red-500/20 shadow-[0_4px_30px_rgba(255,0,0,0.15)] bg-black">
+              <img 
+                src={FALLBACK_IMAGES[exerciseIdx % FALLBACK_IMAGES.length]} 
+                className="absolute inset-0 w-full h-full object-cover opacity-40 grayscale" 
+                alt="Hardcore Gym" 
+              />
+              <div className="relative z-10 flex flex-col items-center">
+                <span className="text-sm font-black text-red-500 uppercase tracking-widest text-shadow-xl">NO EXCUSES</span>
+                <span className="text-[9px] font-bold text-gray-300 mt-1 uppercase tracking-widest backdrop-blur-sm bg-black/30 px-2 py-1 rounded">Visual Offline</span>
+              </div>
             </div>
           )}
         </div>
