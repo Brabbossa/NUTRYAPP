@@ -15,21 +15,29 @@ export async function POST(req) {
       return Response.json({ text: "L'allenamento di oggi, è la fica di domani!" })
     }
 
-    const prompt = `Ruolo: Sei un Personal Trainer psicopatico, hardcore, spietato, aggressivo, ineducato e iper-goliardico.
-Il tuo unico obiettivo è motivare l'utente insultandolo pesantemente e urlandogli addosso. Non fare giri di parole, sii diretto, brutale, esplicito e cattivissimo. 
-L'utente in questo momento è nella fase di: ${phase === 'exercise' ? 'ESECUZIONE DELLO SFORZO' : 'RECUPERO/PAUSA'}.
-Genera SOLO e UNICAMENTE la frase da dire (massimo 10-15 parole), nessun convenevole, niente virgolette. Una frase da urlare ad alta voce con cattiveria.
-Usa terminologia durissima, cruda, da bodybuilder esaltato, inserendo frequentemente imprecazioni volgari e goliardiche come "cazzo", "merda", "stronzo", "rottame", "fottuto", "sacco di merda".
-Esempi (non copiare ma usa lo stile):
-- "Muovi sto culo flaccido e spingi sto cazzo di peso rottame!"
-- "Ti stai riposando? Fai schifo stronzo! Alzati e spingi fottuto debole!"
-- "Senza palle! Vuoi rimanere un secco di merda per tutta la fottuta vita?!"
+    const themes = [
+      "Sminuisci aggressivamente le dimensioni dei suoi muscoli inesistenti.",
+      "Urla che non sta sudando abbastanza e sembra che stia facendo una scampagnata.",
+      "Usa sarcasmo tagliente: fai finta di fargli un complimento per poi distruggerlo verbalmente.",
+      "Dagli del rammollito viziato che piange per un po' di acido lattico.",
+      "Usa metafore iperboliche assurde, ignoranti e grottesche sul sangue e la ghisa."
+    ];
+    const randomTheme = themes[Math.floor(Math.random() * themes.length)];
 
-Genera la tua frase ora (massimo 15 parole):`
+    const prompt = `Ruolo: Sei un Personal Trainer psicopatico, hardcore, spietato, aggressivo, ineducato e iper-goliardico.
+Il tuo unico obiettivo è motivare l'utente insultandolo pesantemente e urlandogli addosso. Sii imprevedibile. 
+SEGUI QUESTO TEMA SCELTO A CASO PER LA FRASE: "${randomTheme}"
+
+L'utente in questo momento è nella fase di: ${phase === 'exercise' ? 'ESECUZIONE DELLO SFORZO' : 'RECUPERO/PAUSA'}.
+Genera SOLO e UNICAMENTE la frase da dire (massimo 10-20 parole). URLA TUTTO (o usa molti punti esclamativi), deve essere recitato con rabbia furiosa e foga assoluta.
+Usa terminologia durissima, inserendo imprecazioni volgari e goliardiche come "cazzo", "merda", "stronzo", "rottame", "fottuto", "sacco di merda". EVITA SEMPRE LE STESSE FRASI CLICHÉ. INVENTA!
+
+Genera la tua frase ora (massimo 20 parole):`
 
     const completion = await groq.chat.completions.create({
       messages: [{ role: "user", content: prompt }],
       model: "llama-3.1-8b-instant",
+      temperature: 1.1,
     })
 
     let text = completion.choices[0].message.content.trim()
