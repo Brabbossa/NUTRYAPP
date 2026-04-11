@@ -121,17 +121,34 @@ export function WorkoutTimer({ plan, onComplete }) {
         const res = await fetch(`https://wger.de/api/v2/exercise/search/?term=${query}&language=2`);
         const data = await res.json();
         
-        if (data.suggestions && data.suggestions.length > 0 && isMounted) {
-          const id = data.suggestions[0].data.base_id;
-          const imgRes = await fetch(`https://wger.de/api/v2/exerciseimage/?exercise_base=${id}`);
-          const imgData = await imgRes.json();
+        let foundImage = null;
+
+        if (data.suggestions && data.suggestions.length > 0) {
+          // Cerca prima se una suggestion ha già l'immagine valorizzata
+          for (const sug of data.suggestions) {
+            if (sug.data.image) {
+              foundImage = sug.data.image.startsWith('http') ? sug.data.image : `https://wger.de${sug.data.image}`;
+              break;
+            }
+          }
           
-          if (imgData.results && imgData.results.length > 0 && isMounted) {
-            setImageUrl(imgData.results[0].image);
-            return;
+          // Se nessuna suggestion ha l'immagine, interroghiamo l'endpoint specifico col base_id del primo risultato
+          if (!foundImage) {
+            const id = data.suggestions[0].data.base_id;
+            const imgRes = await fetch(`https://wger.de/api/v2/exerciseimage/?exercise_base=${id}`);
+            const imgData = await imgRes.json();
+            
+            if (imgData.results && imgData.results.length > 0) {
+              foundImage = imgData.results[0].image.startsWith('http') ? imgData.results[0].image : `https://wger.de${imgData.results[0].image}`;
+            }
           }
         }
-        if (isMounted) setImageError(true);
+        
+        if (foundImage && isMounted) {
+          setImageUrl(foundImage);
+        } else if (isMounted) {
+          setImageError(true);
+        }
       } catch (err) {
         if (isMounted) setImageError(true);
       }
