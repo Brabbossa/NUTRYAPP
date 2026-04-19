@@ -98,6 +98,11 @@ export function WorkoutTimer({ plan, onComplete }) {
   const restDuration = currentExercise ? parseRecupero(currentExercise.recupero) : 60
   
   const motivationTimeoutRef = useRef(null)
+  const countdownRef = useRef(countdown)
+
+  useEffect(() => {
+    countdownRef.current = countdown;
+  }, [countdown]);
 
   const playFartSound = useCallback(() => {
     try {
@@ -258,7 +263,7 @@ export function WorkoutTimer({ plan, onComplete }) {
         const delay = Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000; // Tra 5 e 10 secondi esatti
         motivationTimeoutRef.current = setTimeout(async () => {
           // Non sovrascrivere i voice cue imminenti
-          if (countdown > 5) {
+          if (countdownRef.current > 5) {
             try {
               const res = await fetch('/api/generate-insult', {
                 method: 'POST',
@@ -277,7 +282,7 @@ export function WorkoutTimer({ plan, onComplete }) {
     return () => {
       if (motivationTimeoutRef.current) clearTimeout(motivationTimeoutRef.current);
     };
-  }, [phase, isPaused, voiceEnabled, countdown, voiceAnnounce])
+  }, [phase, isPaused, voiceEnabled, voiceAnnounce])
 
   // Start the workout
   const startWorkout = () => {
